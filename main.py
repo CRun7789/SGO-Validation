@@ -1,6 +1,6 @@
 import pandas as pd
 from irs_data_download import download_and_concatenate_irs_files
-from irs_data_filter import filter_organizations
+from irs_data_filter import filter_organizations, filter_by_name
 
 
 def main():
@@ -19,6 +19,7 @@ def main():
 
         # Apply filtering
         irs_data = filter_organizations(irs_data)
+        irs_data = filter_by_name(irs_data)
         print(f"After filtering: {len(irs_data)} rows")
 
         # Sort by ruling date (most recent first)
