@@ -1,6 +1,6 @@
-# IRS SOI Data Downloader
+# IRS Nonprofit Organization Data Downloader
 
-This project downloads IRS Statistics of Income (SOI) data from multiple regions and combines them into a single dataset.
+This project downloads IRS nonprofit data from multiple regions, combines them into a single dataset, filters them down to likely Scholarship Granting Organizations (SGOs), and returns a shortened list of organizations with an added SGO likelihood rating & associated confidence score.
 
 ## Files
 
@@ -47,15 +47,9 @@ python main.py
 
 8. Saves the combined data to `combined_irs_data.csv`
 
-## Output
-
-The script will generate:
-- Console output showing download progress and statistics
-- `combined_irs_data.csv` - The combined dataset from all regions
-
 ## Column Names
 
-The IRS data includes the following columns:
+The IRS data includes the following relevant columns:
 
 - **EIN** - Employer Identification Number
 - **NAME** - Organization name
@@ -64,26 +58,13 @@ The IRS data includes the following columns:
 - **CITY** - City
 - **STATE** - State
 - **ZIP** - ZIP code
-- **GROUP** - Group code
 - **SUBSECTION** - Subsection
 - **AFFILIATION** - Affiliation code
 - **CLASSIFICATION** - Organization classification
 - **RULING_DATE** - Ruling date (YYYYMM format, e.g., 202601 for Jan 2026)
 - **DEDUCTIBILITY** - Deductibility code
 - **FOUNDATION** - Foundation type code
-- **ACTIVITY** - Activity code
-- **ORGANIZATION** - Organization type
-- **STATUS** - Status code
-- **TAX_PERIOD** - Tax period
-- **ASSET_CD** - Asset code
-- **INCOME_CD** - Income code
-- **FILING_REQ_CD** - Filing requirement code
 - **PF_FILING_REQ_CD** - Private foundation filing requirement code
-- **ACCT_PD** - Accounting period
-- **ASSET_AMT** - Asset amount
-- **INCOME_AMT** - Income amount
-- **REVENUE_AMT** - Revenue amount
 - **NTEE_CD** - National Taxonomy of Exempt Entities code
-- **SORT_NAME** - Sort name
 - **region** - Added by script to indicate source region (Northeast, Mid-Atlantic and Great Lakes, Gulf Coast and Pacific Coast, All Other Areas)
 
