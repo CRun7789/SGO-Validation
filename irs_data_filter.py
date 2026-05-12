@@ -99,7 +99,8 @@ def filter_organizations(df):
     # Filter to keep only rows meeting at least 5 criteria
     filtered_df = df[df['criteria_met'] >= 5].copy()
 
-    # Drop the temporary criteria_met column
+    # Convert criteria_met to a 0-100 score and keep it in the output
+    filtered_df['irs_filter_score'] = (filtered_df['criteria_met'] / 6 * 100).round().astype(int)
     filtered_df = filtered_df.drop(columns=['criteria_met'])
 
     return filtered_df
