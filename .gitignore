@@ -1,0 +1,10 @@
+# Python virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Generated output files (not source code)
+combined_irs_data.csv
+combined_irs_data_scored.xlsx

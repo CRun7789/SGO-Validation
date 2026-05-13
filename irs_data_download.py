@@ -1,5 +1,9 @@
 import requests
 import pandas as pd
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 from io import StringIO
 from irs_data_filter import filter_organizations
 
@@ -14,7 +18,7 @@ IRS_FILE_URLS = {
 def download_irs_file(url):
     """Download IRS CSV file from the given URL."""
     try:
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:

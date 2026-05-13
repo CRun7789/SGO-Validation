@@ -7,6 +7,7 @@ This project downloads IRS nonprofit data from multiple regions, combines them i
 - `main.py` - Main entry point that orchestrates the entire IRS data processing pipeline
 - `irs_data_download.py` - Functions for downloading and processing IRS data files
 - `irs_data_filter.py` - Functions for filtering IRS organization data
+- `sgo_scorer.py` - SGO scoring engine (integrated from the sortingSGOs project) that applies a second confidence scoring pass to the filtered dataset
 - `test_irs_data.py` - Unit tests for filtering functionality
 - `requirements.txt` - Python dependencies
 
@@ -43,9 +44,11 @@ python main.py
 
 6. Sorts data by ruling date (most recent first)
 
-7. Displays dataset information
+7. Applies a second scoring pass (`sgo_scorer.py`) to the filtered dataset, scoring each organization by NTEE classification, name keywords, and IRS field signals
 
-8. Saves the combined data to `combined_irs_data.csv`
+8. Combines both scores into a weighted average confidence score and sorts organizations highest to lowest
+
+9. Saves the results to `combined_irs_data.csv` (raw) and `combined_irs_data_scored.xlsx` (formatted, with hidden raw columns, frozen header, and auto-filters)
 
 ## Column Names
 
