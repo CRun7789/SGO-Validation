@@ -5,7 +5,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from io import StringIO
-from irs_data_filter import filter_organizations
+from irs_data_filter import filter_by_irs_criteria
 
 # IRS SOI CSV file URLs for different regions
 IRS_FILE_URLS = {

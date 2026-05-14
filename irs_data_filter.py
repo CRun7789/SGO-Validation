@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import datetime
 
 WORDS_IN_SGOS = {
     'SGO', 'STO', 'SO', 'EAO', 'SSO', 'SFO', 'OSTC',
@@ -42,10 +43,16 @@ def filter_out_avoid_words(df, name_column='NAME'):
     return df[~df[name_column].apply(has_avoid_word)].copy()
 
 
-def filter_organizations(df):
+def filter_by_irs_criteria(df):
     """
-    Filter organizations based on criteria.
-    Organizations must meet at least 5 of the following 6 criteria to be kept.
+    Filter organizations based on IRS exemption criteria.
+    Organizations must meet at least 5 of the following 6 criteria to be kept:
+    - NTEE_CD (National Taxonomy of Exempt Entities code)
+    - SUBSECTION (tax code subsection)
+    - AFFILIATION (type of affiliation)
+    - CLASSIFICATION (organization classification)
+    - DEDUCTIBILITY (contribution deductibility)
+    - FOUNDATION (type of foundation)
     """
     # Define the valid values for each criterion
     valid_ntee_codes = ['B01', 'B12', 'B20', 'B21', 'B24', 'B25', 'B82', 'B90', 'B99',
@@ -104,3 +111,37 @@ def filter_organizations(df):
     filtered_df = filtered_df.drop(columns=['criteria_met'])
 
     return filtered_df
+
+
+def filter_by_recent_ruling_date(df, months=6, ruling_column='RULING'):
+    """
+    Filter to keep only rows with ruling dates within the last 'months' months.
+    Ruling date is in YYYYMM format (e.g., 202201 for January 2022).
+    """
+    if ruling_column not in df.columns:
+        return df.copy()
+
+    # Get current date
+    now = datetime.datetime.now()
+    current_year = now.year
+    current_month = now.month
+
+    # Calculate cutoff: current minus months
+    total_months = current_year * 12 + current_month - months
+    cutoff_year = total_months // 12
+    cutoff_month = total_months % 12
+    if cutoff_month == 0:
+        cutoff_year -= 1
+        cutoff_month = 12
+    cutoff_yyyymm = cutoff_year * 100 + cutoff_month
+
+    def is_recent(ruling):
+        if pd.isna(ruling):
+            return False
+        try:
+            ruling_int = int(ruling)
+            return ruling_int >= cutoff_yyyymm
+        except ValueError:
+            return False
+
+    return df[df[ruling_column].apply(is_recent)].copy()

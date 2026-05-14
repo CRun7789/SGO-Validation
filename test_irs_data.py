@@ -1,5 +1,5 @@
 import pandas as pd
-from irs_data_filter import filter_organizations, filter_by_name, filter_out_avoid_words
+from irs_data_filter import filter_by_irs_criteria, filter_by_name, filter_out_avoid_words
 
 
 def test_filtering_with_test_data():
@@ -41,7 +41,7 @@ def test_filtering_with_test_data():
     
     try:
         # Apply filter
-        filtered_df = filter_organizations(test_df)
+        filtered_df = filter_by_irs_criteria(test_df)
         
         # Check results
         expected_count = 3

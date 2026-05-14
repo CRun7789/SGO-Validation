@@ -1,6 +1,6 @@
 import pandas as pd
 from irs_data_download import download_and_concatenate_irs_files
-from irs_data_filter import filter_organizations, filter_by_name
+from irs_data_filter import filter_by_irs_criteria, filter_by_name
 from sgo_scorer import compute_sgo_scores
 
 
@@ -24,7 +24,7 @@ def main():
     # Step 2: Apply IRS classification filters (produces irs_filter_score column)
     print("\nStep 2: Applying IRS classification filters...")
     print("-"*40)
-    irs_data = filter_organizations(irs_data)
+    irs_data = filter_by_irs_criteria(irs_data)
     irs_data = filter_by_name(irs_data)
     print(f"After filtering: {len(irs_data)} rows")
 

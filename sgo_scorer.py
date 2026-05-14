@@ -695,8 +695,7 @@ def compute_sgo_scores(df):
     """
     Compute sortingSGOs scorer scores for every row in df.
 
-    Operates on the already-filtered dataset (output of filter_organizations +
-    filter_by_name) — not the full IRS download.
+    Operates on the already-filtered dataset, not the full IRS download.
 
     Returns a DataFrame with two columns:
       sgo_scorer_score  int   0-100, normalized so no non-certified org exceeds 100
