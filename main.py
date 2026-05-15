@@ -1,6 +1,11 @@
 import pandas as pd
 from irs_data_download import download_and_concatenate_irs_files
-from irs_data_filter import filter_by_irs_criteria, filter_by_name
+from irs_data_filter import (
+    filter_by_irs_criteria,
+    filter_by_name,
+    filter_out_avoid_words,
+    filter_by_recent_ruling_date,
+)
 from sgo_scorer import compute_sgo_scores
 
 
@@ -21,12 +26,14 @@ def main():
 
     print(f"\nBefore filtering: {len(irs_data)} rows")
 
-    # Step 2: Apply IRS classification filters (produces irs_filter_score column)
+    # Step 2: Apply IRS classification, name, avoid-word, and recent ruling filters
     print("\nStep 2: Applying IRS classification filters...")
     print("-"*40)
     irs_data = filter_by_irs_criteria(irs_data)
     irs_data = filter_by_name(irs_data)
-    print(f"After filtering: {len(irs_data)} rows")
+    irs_data = filter_out_avoid_words(irs_data)
+    irs_data = filter_by_recent_ruling_date(irs_data)
+    print(f"After filtering by IRS criteria, name, and recent ruling date: {len(irs_data)} rows")
 
     # Step 3: Sort by ruling date (most recent first)
     if 'RULING' in irs_data.columns:
@@ -108,8 +115,8 @@ def _export_excel(df, path):
     Layout:
       Columns A-? (hidden)  : raw IRS data columns
       Columns ?-? (visible) : Region | State | Organization Name | Org Classification |
-                              Business Address | Name | Email | Website | Phone Number |
-                              Ruling Date | Scoring Classification | Average Score
+                              Business Address | Contact Name | Email | Website | Phone Number |
+                              Ruling Date | Scoring Method | SGO Likelihood
       Last two (hidden)     : IRS Filter Score | SGO Scorer Score
     """
     from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
@@ -140,16 +147,16 @@ def _export_excel(df, path):
         ('Organization Name',       'NAME'),
         ('Org Classification',      'NTEE_CD'),
         ('Business Address',        '__address__'),
-        ('Name',                    'ICO'),
+        ('Contact Name',            'ICO'),
         ('Email',                   None),
         ('Website',                 None),
         ('Phone Number',            None),
         ('Ruling Date',             'RULING'),
-        ('Scoring Classification',  'scoring_path'),
-        ('Average Score',           'combined_score'),
+        ('Scoring Method',          'scoring_path'),
+        ('SGO Likelihood',          'combined_score'),
     ]
 
-    # Score sub-columns hidden after Average Score
+    # Score sub-columns hidden after SGO Likelihood
     SCORE_HIDDEN = [
         ('IRS Filter Score',  'irs_filter_score'),
         ('SGO Scorer Score',  'sgo_scorer_score'),
@@ -183,7 +190,7 @@ def _export_excel(df, path):
         n_raw_hidden  = len(raw_hidden)
         display_names = {h for h, _ in DISPLAY}
         score_sub     = {h for h, _ in SCORE_HIDDEN}
-        score_main    = {'Average Score'}
+        score_main    = {'SGO Likelihood'}
 
         # ── Styles ──────────────────────────────────────────────────────────
         hdr_fill   = PatternFill('solid', fgColor='1F4E79')   # dark blue
@@ -199,13 +206,13 @@ def _export_excel(df, path):
             'Organization Name':    70,
             'Org Classification':   18,
             'Business Address':     48,
-            'Name':                 24,
+            'Contact Name':         24,
             'Email':                28,
             'Website':              28,
             'Phone Number':         16,
             'Ruling Date':          13,
-            'Scoring Classification': 22,
-            'Average Score':        14,
+            'Scoring Method':       22,
+            'SGO Likelihood':       14,
             'IRS Filter Score':     15,
             'SGO Scorer Score':     15,
         }
@@ -228,8 +235,8 @@ def _export_excel(df, path):
             # Width
             dim.width = COL_WIDTHS.get(col_name, 12)
 
-            # Hide raw IRS columns and score sub-columns
-            if col_idx <= n_raw_hidden or col_name in score_sub:
+            # Hide raw IRS columns, Region, and score sub-columns
+            if col_idx <= n_raw_hidden or col_name == 'Region' or col_name in score_sub:
                 dim.hidden = True
 
         # ── Header row height ────────────────────────────────────────────────

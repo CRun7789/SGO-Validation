@@ -18,7 +18,7 @@ IRS_FILE_URLS = {
 def download_irs_file(url):
     """Download IRS CSV file from the given URL."""
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=False) # Disables SSL verification for this request
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:
