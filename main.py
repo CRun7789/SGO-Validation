@@ -109,6 +109,7 @@ def main():
 
 def _remove_certified_rows(df, scoring_col='scoring_path'):
     """Return a copy of `df` with rows where `scoring_col` == 'CERTIFIED' removed.
+    We already know these are SGOs, so we can exclude them.
 
     This is applied only to the Excel output; the CSV export retains all rows.
     """
