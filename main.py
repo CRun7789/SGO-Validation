@@ -24,8 +24,6 @@ def main():
         print("Failed to download IRS data. Exiting.")
         return 1
 
-    print(f"\nBefore filtering: {len(irs_data)} rows")
-
     # Step 2: Apply IRS classification, name, avoid-word, and recent ruling filters
     print("\nStep 2: Applying IRS classification filters...")
     print("-"*40)
@@ -99,13 +97,24 @@ def main():
 
     # Excel with score columns highlighted
     xlsx_file = "combined_irs_data_scored.xlsx"
-    _export_excel(irs_data, xlsx_file)
+    excel_df = _remove_certified_rows(irs_data)
+    _export_excel(excel_df, xlsx_file)
     print(f"Excel saved to {xlsx_file}")
 
     print("\n" + "="*60)
     print("Processing complete!")
     print("="*60)
     return 0
+
+
+def _remove_certified_rows(df, scoring_col='scoring_path'):
+    """Return a copy of `df` with rows where `scoring_col` == 'CERTIFIED' removed.
+
+    This is applied only to the Excel output; the CSV export retains all rows.
+    """
+    if scoring_col in df.columns:
+        return df[df[scoring_col] != 'CERTIFIED'].copy()
+    return df.copy()
 
 
 def _export_excel(df, path):
@@ -121,6 +130,7 @@ def _export_excel(df, path):
     """
     from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
+    from openpyxl.worksheet.filters import FilterColumn, Filters
 
     # ── 1. Build business address ────────────────────────────────────────────
     def _address(row):
@@ -249,6 +259,33 @@ def _export_excel(df, path):
         ws.auto_filter.ref = (
             f"A1:{get_column_letter(len(all_headers))}1"
         )
+
+        # ── Filter out CERTIFIED organizations ───────────────────────────────
+        scoring_method_col_idx = None
+        for idx, col_name in enumerate(all_headers, start=1):
+            if col_name == 'Scoring Method':
+                scoring_method_col_idx = idx
+                break
+
+        if scoring_method_col_idx is not None:
+            # Collect all unique values in Scoring Method column
+            all_values = set()
+            for row_idx in range(2, ws.max_row + 1):
+                cell_value = ws.cell(row=row_idx, column=scoring_method_col_idx).value
+                if cell_value:
+                    all_values.add(str(cell_value))
+
+            # Create filter with all values except 'CERTIFIED'
+            visible_values = sorted([v for v in all_values if v != 'CERTIFIED'])
+            filters_obj = Filters()
+            for v in visible_values:
+                filters_obj.filter.append(v)
+
+            flt = FilterColumn(colId=scoring_method_col_idx - 1, filters=filters_obj)
+            ws.auto_filter.filterColumn.append(flt)
+
+            # NOTE: Do not explicitly hide rows here; rely on the AutoFilter
+            # to exclude 'CERTIFIED' values so users can toggle visibility.
 
 
 if __name__ == "__main__":

@@ -59,7 +59,7 @@ def download_and_concatenate_irs_files():
     # Concatenate all dataframes
     if dataframes:
         combined_df = pd.concat(dataframes, ignore_index=True)
-        print(f"\nTotal rows in combined dataset: {len(combined_df)}")
+        print(f"\nCombined dataset: {len(combined_df)} rows")
         return combined_df
     else:
         print("No data was successfully downloaded.")

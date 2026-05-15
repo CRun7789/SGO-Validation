@@ -98,3 +98,15 @@ The final outputs include raw IRS fields plus derived scoring columns.
 
 The Excel file also stores hidden raw IRS columns and hidden score columns for reference.
 
+## Configuration
+
+### Recent Ruling Date Filter
+
+The pipeline filters organizations to include only those with ruling dates within the last 6 months by default. To change this:
+
+1. Open `main.py`
+2. Find the line that calls `filter_by_recent_ruling_date(irs_data)` in Step 2 (around line 35)
+3. Modify it to `filter_by_recent_ruling_date(irs_data, months=N)` where `N` is the desired number of months
+
+For example, to filter for the last 12 months instead: `filter_by_recent_ruling_date(irs_data, months=12)`
+
