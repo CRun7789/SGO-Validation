@@ -12,6 +12,7 @@ from typing import Dict, Optional
 import re
 
 _ein_map: Optional[Dict[str, Optional[str]]] = None
+_name_map: Optional[Dict[str, Optional[str]]] = None
 _loaded_filepath: Optional[str] = None
 _EPOSTCARD_FILEPATH: str = "./data-download-epostcard.txt"
 
@@ -21,6 +22,16 @@ def _normalize_ein(ein: str) -> str:
     s = str(ein)
     digits = re.sub(r"\D", "", s)
     return digits.zfill(9)
+
+
+def _normalize_name(name: str) -> str:
+    if name is None:
+        return ""
+    s = str(name).strip().lower()
+    # Remove punctuation, collapse whitespace
+    s = re.sub(r"[^a-z0-9\s]", "", s)
+    s = re.sub(r"\s+", " ", s)
+    return s
 
 
 def load_ein_website_map() -> Dict[str, Optional[str]]:
@@ -36,6 +47,7 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
         return _ein_map
 
     ein_map: Dict[str, Optional[str]] = {}
+    name_map: Dict[str, Optional[str]] = {}
 
     try:
         # Primary path: use pandas for efficiency. usecols=[0,2,7] loads only
@@ -57,14 +69,22 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
 
         for _, row in df.iterrows():
             ein_raw = row["EIN"]
+            org_name = row["OrgName"]
             website = row["Website"]
             if pd.isna(ein_raw):
                 continue
             norm = _normalize_ein(ein_raw)
+            site = None
             if website is None or (isinstance(website, float) and pd.isna(website)):
-                ein_map[norm] = None
+                site = None
             else:
-                ein_map[norm] = str(website).strip()
+                site = str(website).strip()
+            ein_map[norm] = site
+            # Populate name map if org name present; keep first encountered non-empty site
+            if org_name is not None and not pd.isna(org_name):
+                nname = _normalize_name(org_name)
+                if nname and nname not in name_map:
+                    name_map[nname] = site
 
     except Exception:
         # Fallback: if pandas is unavailable or fails, use the standard CSV module.
@@ -82,16 +102,23 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
         with open(_EPOSTCARD_FILEPATH, "r", encoding="ascii", errors="replace") as fh:
             reader = csv.reader(fh, delimiter="|")
             for row in reader:
-                if len(row) <= 7:
-                    continue
-                ein_raw = row[0]
-                website = row[7]
-                if ein_raw is None or ein_raw == "":
-                    continue
-                norm = _normalize_ein(ein_raw)
-                ein_map[norm] = website.strip() if website is not None and website != "" else None
+                    if len(row) <= 7:
+                        continue
+                    ein_raw = row[0]
+                    org_name = row[2] if len(row) > 2 else None
+                    website = row[7]
+                    if ein_raw is None or ein_raw == "":
+                        continue
+                    norm = _normalize_ein(ein_raw)
+                    site = website.strip() if website is not None and website != "" else None
+                    ein_map[norm] = site
+                    if org_name:
+                        nname = _normalize_name(org_name)
+                        if nname and nname not in name_map:
+                            name_map[nname] = site
 
     _ein_map = ein_map
+    _name_map = name_map
     return _ein_map
 
 
@@ -107,3 +134,63 @@ def get_website_by_ein(ein: str) -> Optional[str]:
 
     norm = _normalize_ein(ein)
     return _ein_map.get(norm)
+
+
+def get_website_by_name(name: str) -> Optional[str]:
+    """Return website for normalized organization `name` if present in the ePostcard data."""
+    global _name_map
+    if _ein_map is None or _name_map is None:
+        load_ein_website_map()
+
+    if name is None:
+        return None
+    nname = _normalize_name(name)
+    return _name_map.get(nname)
+
+
+def get_website_with_status(ein: str = None, name: str = None) -> tuple[Optional[str], Optional[str]]:
+    """Return (website, source) with concise source codes.
+
+    Source values:
+      - 'EIN'            : website found by EIN lookup
+      - 'NAME'           : website found by name lookup
+      - '990N-empty'     : EIN (or name) present in 990N but no website recorded
+      - 'missing'   : no matching record found in the 990N data
+      - None             : no input provided
+
+    Priority: EIN lookup takes precedence. If an EIN is present in the
+    990N data (even if its website is None) we return that result and do
+    not fallback to name.
+    """
+    global _ein_map, _name_map
+    if _ein_map is None or _name_map is None:
+        load_ein_website_map()
+
+    # Normalize inputs
+    ein_input = None if ein is None or str(ein).strip() == "" else _normalize_ein(ein)
+    name_input = None if name is None or str(name).strip() == "" else _normalize_name(name)
+
+    # EIN has priority
+    if ein_input:
+        if ein_input in _ein_map:
+            site = _ein_map.get(ein_input)
+            if site:
+                return site, 'EIN'
+            return None, '990N-empty'
+        # EIN not in map -> fall through to name lookup
+
+    if name_input:
+        if name_input in _name_map:
+            site = _name_map.get(name_input)
+            if site:
+                return site, 'NAME'
+            return None, '990N-empty'
+        return None, 'missing'
+
+    return None, None
+
+
+def get_website(ein: str = None, name: str = None) -> Optional[str]:
+    """Compatibility wrapper: return only the website string (or None)."""
+    site, _ = get_website_with_status(ein=ein, name=name)
+    return site

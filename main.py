@@ -1,4 +1,5 @@
 import importlib
+import time
 import pandas as pd
 from src.acquisition.irs_data_download import download_and_concatenate_irs_files
 from src.processing.irs_data_filter import (
@@ -14,6 +15,7 @@ _990n_processor = importlib.import_module("src.utils.990n_processor")
 
 def main():
     """Main function to download, filter, score, and export IRS SGO data."""
+    start_time = time.perf_counter()
     print("="*60)
     print("IRS SOI Data Processing Pipeline")
     print("="*60)
@@ -25,6 +27,7 @@ def main():
 
     if irs_data is None:
         print("Failed to download IRS data. Exiting.")
+        _print_elapsed(start_time)
         return 1
 
     # Step 2: Apply IRS classification, name, avoid-word, and recent ruling filters
@@ -93,10 +96,16 @@ def main():
           f"avg: {irs_data['combined_score'].mean():.1f}")
 
     print("Finding contact info...")
-    # Step 7: Add contact info / website lookup
-    irs_data['website'] = irs_data['EIN'].apply(
-        lambda ein: _990n_processor.get_website_by_ein(ein) if pd.notna(ein) else None
-    )
+    # Step 7: Add contact info / website lookup (prefer EIN, fallback to NAME)
+    def _lookup_website(row):
+        ein = row['EIN'] if pd.notna(row.get('EIN')) else None
+        name = row['NAME'] if pd.notna(row.get('NAME')) else None
+        site, src = _990n_processor.get_website_with_status(ein=ein, name=name)
+        return pd.Series({'website': site, 'website_source': src})
+
+    website_df = irs_data.apply(_lookup_website, axis=1)
+    irs_data['website'] = website_df['website']
+    irs_data['website_source'] = website_df['website_source']
 
     # TODO: Add additional contact info retrieval here before exporting to the Excel output.
 
@@ -115,6 +124,7 @@ def main():
     print("\n" + "="*60)
     print("Processing complete!")
     print("="*60)
+    _print_elapsed(start_time)
     return 0
 
 
@@ -127,6 +137,24 @@ def _remove_certified_rows(df, scoring_col='scoring_path'):
     if scoring_col in df.columns:
         return df[df[scoring_col] != 'CERTIFIED'].copy()
     return df.copy()
+
+
+def _print_elapsed(start_time):
+    """Print elapsed wall-clock time since `start_time` (seconds)."""
+    try:
+        elapsed = time.perf_counter() - start_time
+        if elapsed < 60:
+            print(f"Total runtime: {elapsed:.2f} seconds")
+        else:
+            mins, secs = divmod(int(elapsed), 60)
+            hours, mins = divmod(mins, 60)
+            if hours:
+                print(f"Total runtime: {hours}h {mins}m {secs}s")
+            else:
+                print(f"Total runtime: {mins}m {secs}s")
+    except Exception:
+        # If something goes wrong printing elapsed time, don't raise.
+        pass
 
 
 def _export_excel(df, path):
