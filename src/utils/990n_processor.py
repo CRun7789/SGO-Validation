@@ -71,6 +71,13 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
         # Less efficient (reads all columns before extracting the three needed),
         # but ensures robustness if pandas import/execution fails.
         import csv
+        import sys
+
+        try:
+            # Allow very large fields in the fallback CSV reader.
+            csv.field_size_limit(sys.maxsize)
+        except OverflowError:
+            csv.field_size_limit(2**31 - 1)
 
         with open(_EPOSTCARD_FILEPATH, "r", encoding="ascii", errors="replace") as fh:
             reader = csv.reader(fh, delimiter="|")

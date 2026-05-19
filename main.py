@@ -1,3 +1,4 @@
+import importlib
 import pandas as pd
 from src.acquisition.irs_data_download import download_and_concatenate_irs_files
 from src.processing.irs_data_filter import (
@@ -7,6 +8,8 @@ from src.processing.irs_data_filter import (
     filter_by_recent_ruling_date,
 )
 from src.processing.sgo_scorer import compute_sgo_scores
+
+_990n_processor = importlib.import_module("src.utils.990n_processor")
 
 
 def main():
@@ -89,7 +92,15 @@ def main():
           f"max: {irs_data['combined_score'].max()}, "
           f"avg: {irs_data['combined_score'].mean():.1f}")
 
-    # Step 7: Save outputs
+    print("Finding contact info...")
+    # Step 7: Add contact info / website lookup
+    irs_data['website'] = irs_data['EIN'].apply(
+        lambda ein: _990n_processor.get_website_by_ein(ein) if pd.notna(ein) else None
+    )
+
+    # TODO: Add additional contact info retrieval here before exporting to the Excel output.
+
+    # Step 8: Save outputs
     # Plain CSV (backwards-compatible)
     csv_file = "combined_irs_data.csv"
     irs_data.to_csv(csv_file, index=False)
