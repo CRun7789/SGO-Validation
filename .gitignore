@@ -8,6 +8,7 @@ __pycache__/
 # Generated output files (not source code)
 combined_irs_data.csv
 combined_irs_data_scored.xlsx
+~$combined_irs_data_scored.xlsx
 
 # 990N epostcard data
 data-download-epostcard.txt
