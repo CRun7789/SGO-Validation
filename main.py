@@ -1,12 +1,12 @@
 import pandas as pd
-from irs_data_download import download_and_concatenate_irs_files
-from irs_data_filter import (
+from src.acquisition.irs_data_download import download_and_concatenate_irs_files
+from src.processing.irs_data_filter import (
     filter_by_irs_criteria,
     filter_by_name,
     filter_out_avoid_words,
     filter_by_recent_ruling_date,
 )
-from sgo_scorer import compute_sgo_scores
+from src.processing.sgo_scorer import compute_sgo_scores
 
 
 def main():

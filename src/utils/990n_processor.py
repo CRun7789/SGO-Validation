@@ -38,6 +38,9 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
     ein_map: Dict[str, Optional[str]] = {}
 
     try:
+        # Primary path: use pandas for efficiency. usecols=[0,2,7] loads only
+        # the needed columns from the large pipe-delimited file, avoiding
+        # unnecessary I/O and memory overhead.
         import pandas as pd
 
         df = pd.read_csv(
@@ -64,7 +67,9 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
                 ein_map[norm] = str(website).strip()
 
     except Exception:
-        # Fallback to streaming CSV reader (lower memory)
+        # Fallback: if pandas is unavailable or fails, use the standard CSV module.
+        # Less efficient (reads all columns before extracting the three needed),
+        # but ensures robustness if pandas import/execution fails.
         import csv
 
         with open(_EPOSTCARD_FILEPATH, "r", encoding="ascii", errors="replace") as fh:

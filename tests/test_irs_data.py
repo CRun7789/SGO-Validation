@@ -1,5 +1,5 @@
 import pandas as pd
-from irs_data_filter import filter_by_irs_criteria, filter_by_name, filter_out_avoid_words
+from src.processing.irs_data_filter import filter_by_irs_criteria, filter_by_name, filter_out_avoid_words
 
 
 def test_filtering_with_test_data():

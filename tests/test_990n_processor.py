@@ -2,7 +2,7 @@ import os
 import importlib
 
 # Import module with numeric name
-processor = importlib.import_module("990n_processor")
+processor = importlib.import_module("src.utils.990n_processor")
 
 
 SAMPLE = """

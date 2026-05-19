@@ -5,9 +5,8 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from io import StringIO
-from irs_data_filter import filter_by_irs_criteria
 
-# IRS SOI CSV file URLs for different regions
+# IRS CSV file URLs for different regions
 IRS_FILE_URLS = {
     "Northeast": "https://www.irs.gov/pub/irs-soi/eo1.csv",
     "Mid-Atlantic and Great Lakes": "https://www.irs.gov/pub/irs-soi/eo2.csv",
