@@ -32,12 +32,15 @@ def main():
 
     # Apply IRS classification, name, avoid-word, and recent ruling filters
     print("\nApplying IRS classification filters...")
-    print("-"*40)
-    irs_data = filter_by_irs_criteria(irs_data)
+    irs_data = filter_by_recent_ruling_date(irs_data) # filter by date first, since that's the biggest
+    print(f"\tAfter date: {len(irs_data)}")
     irs_data = filter_by_name(irs_data)
+    print(f"\tAfter name (SGO words): {len(irs_data)}")
     irs_data = filter_out_avoid_words(irs_data)
-    irs_data = filter_by_recent_ruling_date(irs_data)
-    print(f"After filtering by IRS criteria, name, and recent ruling date: {len(irs_data)} rows")
+    print(f"\tAfter name (words to avoid): {len(irs_data)}")
+    irs_data = filter_by_irs_criteria(irs_data)
+    print(f"\tAfter IRS criteria: {len(irs_data)}")
+    print(f"\nAfter all filtering: {len(irs_data)} rows")
 
     # Apply sortingSGOs scoring logic to the already-filtered set
     print("\nComputing confidence scores...")
@@ -67,7 +70,7 @@ def main():
     irs_data['combined_score'] -= 1 # Subtract 1 because nothing is 100% certain
 
     # Re-sort by combined score descending, then ruling date descending
-    print("\nSorting by newest & most likely organizations...")
+    print("\nSorting by newest and most relevant organizations...")
     irs_data = irs_data.sort_values(
         ['combined_score', 'RULING'],
         ascending=[False, False],
