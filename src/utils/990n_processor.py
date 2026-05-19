@@ -22,7 +22,7 @@ def _normalize_ein(ein: str) -> str:
     s = str(ein)
     digits = re.sub(r"\D", "", s)
     return digits.zfill(9)
-
+BIGCOUNT = 0
 
 def _normalize_name(name: str) -> str:
     if name is None:
@@ -175,9 +175,9 @@ def get_website_with_status(ein: str = None, name: str = None) -> str:
     if name_input:
         if name_input in _name_map:
             site = _name_map.get(name_input)
-            return site if site else None
+            return site if site else "empty"
 
-    return None
+    return "No 990N"
 
 
 def get_website(ein: str = None, name: str = None) -> Optional[str]:

@@ -40,7 +40,6 @@ def download_and_concatenate_irs_files():
     dataframes = []
     
     for region, url in IRS_FILE_URLS.items():
-        print(f"Downloading {region} region data...")
         csv_text = download_irs_file(url)
         
         if csv_text:
@@ -49,7 +48,7 @@ def download_and_concatenate_irs_files():
                 # Add region column for reference
                 df['region'] = region
                 dataframes.append(df)
-                print(f"✓ Successfully loaded {region} region ({len(df)} rows)")
+                print(f"✓ Downloaded data for the {region} region ({len(df)} rows)")
             else:
                 print(f"✗ Failed to parse {region} region CSV")
         else:

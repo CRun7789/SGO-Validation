@@ -18,12 +18,11 @@ def main():
     """Main function to download, filter, score, and export IRS SGO data."""
     start_time = time.perf_counter()
     print("="*60)
-    print("IRS SOI Data Processing Pipeline")
+    print("IRS Data Processing Pipeline")
     print("="*60)
 
-    # Step 1: Download and concatenate all IRS files
-    print("\nStep 1: Downloading IRS data from all regions...")
-    print("-"*40)
+    # Download and concatenate all IRS files
+    print("\nDownloading IRS data from all regions...\n")
     irs_data = download_and_concatenate_irs_files()
 
     if irs_data is None:
@@ -31,8 +30,8 @@ def main():
         _print_elapsed(start_time)
         return 1
 
-    # Step 2: Apply IRS classification, name, avoid-word, and recent ruling filters
-    print("\nStep 2: Applying IRS classification filters...")
+    # Apply IRS classification, name, avoid-word, and recent ruling filters
+    print("\nApplying IRS classification filters...")
     print("-"*40)
     irs_data = filter_by_irs_criteria(irs_data)
     irs_data = filter_by_name(irs_data)
@@ -40,17 +39,8 @@ def main():
     irs_data = filter_by_recent_ruling_date(irs_data)
     print(f"After filtering by IRS criteria, name, and recent ruling date: {len(irs_data)} rows")
 
-    # Step 3: Sort by ruling date (most recent first)
-    if 'RULING' in irs_data.columns:
-        irs_data['RULING'] = pd.to_numeric(irs_data['RULING'], errors='coerce')
-        irs_data = irs_data.sort_values(
-            'RULING', ascending=False, na_position='last'
-        ).reset_index(drop=True)
-        print("Data sorted by ruling date (most recent first)")
-
-    # Step 4: Apply sortingSGOs scoring logic to the already-filtered set
-    print("\nStep 4: Computing sortingSGOs confidence scores...")
-    print("-"*40)
+    # Apply sortingSGOs scoring logic to the already-filtered set
+    print("\nComputing confidence scores...")
     scorer_results = compute_sgo_scores(irs_data)
     irs_data['sgo_scorer_score'] = scorer_results['sgo_scorer_score']
     irs_data['scoring_path']     = scorer_results['scoring_path']
@@ -60,7 +50,7 @@ def main():
     for path, count in path_counts.items():
         print(f"  {path}: {count}")
 
-    # Step 5: Compute weighted combined score
+    # Compute weighted combined score
     #   NTEE path or CERTIFIED → 50% irs_filter_score + 50% sgo_scorer_score
     #   NO_NTEE / UNCLASSIFIED / DISQUALIFIED → 65% irs_filter_score + 35% sgo_scorer_score
     ntee_mask = irs_data['scoring_path'].isin(['NTEE', 'CERTIFIED'])
@@ -74,15 +64,17 @@ def main():
         0.65 * irs_data.loc[~ntee_mask, 'irs_filter_score'] +
         0.35 * irs_data.loc[~ntee_mask, 'sgo_scorer_score']
     ).round(1)
+    irs_data['combined_score'] -= 1 # Subtract 1 because nothing is 100% certain
 
     # Re-sort by combined score descending, then ruling date descending
+    print("\nSorting by newest & most likely organizations...")
     irs_data = irs_data.sort_values(
         ['combined_score', 'RULING'],
         ascending=[False, False],
         na_position='last'
     ).reset_index(drop=True)
 
-    # Step 6: Display summary
+    # Display summary
     print("\nDataset Info:")
     print(f"  Shape: {irs_data.shape}")
     print(f"\nScore Summary:")
@@ -97,28 +89,20 @@ def main():
           f"avg: {irs_data['combined_score'].mean():.1f}")
 
 
-    # Step 7: Add contact info / website lookup (prefer EIN, fallback to NAME)
-    print("Finding contact info...")
+    # Add contact info / website lookup (prefer EIN, fallback to NAME)
+    print("\n\nFinding contact info...")
     def _lookup_website(row):
         ein = row['EIN'] if pd.notna(row.get('EIN')) else None
         name = row['NAME'] if pd.notna(row.get('NAME')) else None
         site = _990n_processor.get_website_with_status(ein=ein, name=name)
-        if site == "empty":
-            return pd.Series({'website': 'empty'})
-        if site == "no 990N on record":
-            return pd.Series({'website': 'missing 990n'})
         return pd.Series({'website': site})
 
     website_df = irs_data.apply(_lookup_website, axis=1)
     irs_data['website'] = website_df['website']
 
-    print("IRS data columns:")
-    for col in irs_data.columns:
-        print(col)
+    # TODO: Add additional contact info retrieval here before exporting
 
-    # TODO: Add additional contact info retrieval here before exporting to the Excel output.
-
-    # Step 8: Save outputs
+    # Save outputs
     processed_dir = os.path.join("data", "processed")
 
     # Plain CSV (backwards-compatible)
