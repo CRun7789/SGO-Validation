@@ -14,7 +14,7 @@ import re
 _ein_map: Optional[Dict[str, Optional[str]]] = None
 _name_map: Optional[Dict[str, Optional[str]]] = None
 _loaded_filepath: Optional[str] = None
-_EPOSTCARD_FILEPATH: str = "./data-download-epostcard.txt"
+_EPOSTCARD_FILEPATH: str = "./data/raw/data_download_epostcard.txt"
 
 def _normalize_ein(ein: str) -> str:
     if ein is None:
@@ -40,7 +40,7 @@ def load_ein_website_map() -> Dict[str, Optional[str]]:
     Uses _EPOSTCARD_FILEPATH. The file is expected to be ASCII, pipe-delimited, no header.
     Columns used: 0 = EIN, 2 = Organization Name, 7 = Website
     """
-    global _ein_map, _loaded_filepath
+    global _ein_map, _name_map, _loaded_filepath
     if not _EPOSTCARD_FILEPATH:
         raise ValueError("_EPOSTCARD_FILEPATH not set. Set it to the path of data-download-epostcard.txt")
     if _ein_map is not None and _loaded_filepath == _EPOSTCARD_FILEPATH:
@@ -148,18 +148,13 @@ def get_website_by_name(name: str) -> Optional[str]:
     return _name_map.get(nname)
 
 
-def get_website_with_status(ein: str = None, name: str = None) -> tuple[Optional[str], Optional[str]]:
-    """Return (website, source) with concise source codes.
+def get_website_with_status(ein: str = None, name: str = None) -> str:
+    """Return a website link or a status string.
 
-    Source values:
-      - 'EIN'            : website found by EIN lookup
-      - 'NAME'           : website found by name lookup
-      - '990N-empty'     : EIN (or name) present in 990N but no website recorded
-      - 'missing'   : no matching record found in the 990N data
-      - None             : no input provided
+    Returns a website link, if found, or None if website field is blank, or no matching EIN or name in the 990N data
 
     Priority: EIN lookup takes precedence. If an EIN is present in the
-    990N data (even if its website is None) we return that result and do
+    990N data (even if its website is blank) we return that result and do
     not fallback to name.
     """
     global _ein_map, _name_map
@@ -174,23 +169,23 @@ def get_website_with_status(ein: str = None, name: str = None) -> tuple[Optional
     if ein_input:
         if ein_input in _ein_map:
             site = _ein_map.get(ein_input)
-            if site:
-                return site, 'EIN'
-            return None, '990N-empty'
+            return site if site else None
         # EIN not in map -> fall through to name lookup
 
     if name_input:
         if name_input in _name_map:
             site = _name_map.get(name_input)
-            if site:
-                return site, 'NAME'
-            return None, '990N-empty'
-        return None, 'missing'
+            return site if site else None
 
-    return None, None
+    return None
 
 
 def get_website(ein: str = None, name: str = None) -> Optional[str]:
     """Compatibility wrapper: return only the website string (or None)."""
-    site, _ = get_website_with_status(ein=ein, name=name)
+    site = get_website_with_status(ein=ein, name=name)
+
+    # Check for bad values - "N/A", "None", etc.
+    if (site.casefold() == "N/A".casefold()) or (site.casefold() == "N\\A".casefold()) or (site.casefold() == "none".casefold()):
+        site = None
+
     return site

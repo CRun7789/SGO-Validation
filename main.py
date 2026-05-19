@@ -1,4 +1,5 @@
 import importlib
+import os
 import time
 import pandas as pd
 from src.acquisition.irs_data_download import download_and_concatenate_irs_files
@@ -95,28 +96,38 @@ def main():
           f"max: {irs_data['combined_score'].max()}, "
           f"avg: {irs_data['combined_score'].mean():.1f}")
 
-    print("Finding contact info...")
+
     # Step 7: Add contact info / website lookup (prefer EIN, fallback to NAME)
+    print("Finding contact info...")
     def _lookup_website(row):
         ein = row['EIN'] if pd.notna(row.get('EIN')) else None
         name = row['NAME'] if pd.notna(row.get('NAME')) else None
-        site, src = _990n_processor.get_website_with_status(ein=ein, name=name)
-        return pd.Series({'website': site, 'website_source': src})
+        site = _990n_processor.get_website_with_status(ein=ein, name=name)
+        if site == "empty":
+            return pd.Series({'website': 'empty'})
+        if site == "no 990N on record":
+            return pd.Series({'website': 'missing 990n'})
+        return pd.Series({'website': site})
 
     website_df = irs_data.apply(_lookup_website, axis=1)
     irs_data['website'] = website_df['website']
-    irs_data['website_source'] = website_df['website_source']
+
+    print("IRS data columns:")
+    for col in irs_data.columns:
+        print(col)
 
     # TODO: Add additional contact info retrieval here before exporting to the Excel output.
 
     # Step 8: Save outputs
+    processed_dir = os.path.join("data", "processed")
+
     # Plain CSV (backwards-compatible)
-    csv_file = "combined_irs_data.csv"
+    csv_file = os.path.join(processed_dir, "combined_irs_data.csv")
     irs_data.to_csv(csv_file, index=False)
     print(f"\nCSV saved to {csv_file}")
 
     # Excel with score columns highlighted
-    xlsx_file = "combined_irs_data_scored.xlsx"
+    xlsx_file = os.path.join(processed_dir, "combined_irs_data_scored.xlsx")
     excel_df = _remove_certified_rows(irs_data)
     _export_excel(excel_df, xlsx_file)
     print(f"Excel saved to {xlsx_file}")
@@ -199,7 +210,7 @@ def _export_excel(df, path):
         ('Business Address',        '__address__'),
         ('Contact Name',            'ICO'),
         ('Email',                   None),
-        ('Website',                 None),
+        ('Website',                 'website'),
         ('Phone Number',            None),
         ('Ruling Date',             'RULING'),
         ('Scoring Method',          'scoring_path'),

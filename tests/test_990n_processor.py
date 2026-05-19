@@ -30,3 +30,11 @@ def test_load_and_lookup(tmp_path):
     # Test get_website_by_ein with different EIN formats
     assert processor.get_website_by_ein("000981374") == "www.falmouthwalk.org"
     assert processor.get_website_by_ein("981374") == "www.falmouthwalk.org"
+
+    # Test website/status lookup behavior
+    assert processor.get_website_with_status("000981374", None) == "www.falmouthwalk.org"
+    assert processor.get_website_with_status("000981374", "Another Org") == "www.falmouthwalk.org"
+    assert processor.get_website_with_status("123456789", None) == None
+    assert processor.get_website_with_status(None, "Another Org") == None
+    assert processor.get_website_with_status("000000000", "Unknown Org") == None
+    assert processor.get_website("123456789", None) is None
