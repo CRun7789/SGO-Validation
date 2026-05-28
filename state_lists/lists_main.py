@@ -1,8 +1,20 @@
+import csv
+import sys
 import requests
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# ---------------------------------------------------------------------------
+# Parsers (import here so missing deps surface immediately at startup)
+# ---------------------------------------------------------------------------
+sys.path.insert(0, __file__.replace("lists_main.py", ""))  # ensure local imports work
+from models import SGO
+from parsers.html_parser import parse_html_table, parse_html_list
+from parsers.pdf_parser import parse_pdf
+from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
@@ -88,13 +100,50 @@ blocked_urls = { # As of 5/28 3pm
 
 session = requests.Session()  # reuse TCP connections, stores cookies
 
-print(f"\nThis program will check {len(urls)} URLs to see if they can be accessed by Python.\n")
+def fetch_bytes(url: str, session: requests.Session) -> bytes:
+    """Download raw bytes from url. Raises requests.HTTPError on non-2xx."""
+    r = session.get(url, headers=HEADERS, timeout=15, allow_redirects=True, verify=False)
+    r.raise_for_status()
+    return r.content
 
-for name, url in urls.items():
-    print(f"-----------\nChecking {name} - {url}")
-    result = check_site(url, session)
-    status = f"[{result.status}]" if result.status else "[---]"
-    flag = "🚫 BLOCKED" if result.blocked else ("✅ OK" if result.blocked is False else "⚠️  UNKNOWN")
-    print(f"{flag} {status} {result.url}  —  {result.reason}")
-    time.sleep(1)  # be polite; also reduces rate-limit triggers
+def get_parser(name: str):
+    """
+    Return the appropriate parser based on the key name from the urls dict.
+    Key names already encode the type ("pdf list", "xlsx list", etc.).
+    """
+    n = name.lower()
+    if "pdf" in n:
+        return lambda content, state, url: parse_pdf(content, state, url)
+    if "xlsx" in n:
+        return lambda content, state, url: parse_xlsx(content, state, url)
+    if "csv" in n or "excel" in n:
+        return lambda content, state, url: parse_csv(content, state, url)
+    if "word" in n:
+        return lambda content, state, url: parse_docx(content, state, url)
+    # HTML sources: "page list" uses table extraction, "page source" uses list extraction
+    if "page list" in n:
+        return lambda content, state, url: parse_html_table(content.decode("utf-8", errors="replace"), state, url)
+    return lambda content, state, url: parse_html_list(content.decode("utf-8", errors="replace"), state, url)
 
+
+def write_results(sgos: list[SGO], path: str) -> None:
+    """Write extracted SGO records to a CSV file."""
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["state", "name", "ein", "raw_source"])
+        writer.writeheader()
+        writer.writerows(asdict(s) for s in sgos)
+    print(f"\nWrote {len(sgos)} SGO records to {path}")
+
+
+def check_urls():
+    print(f"\nThis function will check {len(urls)} URLs to see if they can be accessed by Python.\n")
+
+    for name, url in urls.items():
+        print(f"-----------\nChecking {name} - {url}")
+        result = check_site(url, session)
+        status = f"[{result.status}]" if result.status else "[---]"
+        flag = "🚫 BLOCKED" if result.blocked else ("✅ OK" if result.blocked is False else "⚠️  UNKNOWN")
+        print(f"{flag} {status} {result.url}  —  {result.reason}")
+        time.sleep(1)  # be polite; also reduces rate-limit triggers
+
+check_urls()
