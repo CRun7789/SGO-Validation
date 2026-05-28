@@ -111,7 +111,9 @@ def parse_pdf_az(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
                     if address is None:
                         city_m = _STATE_ZIP_RE.search(stripped)
                         if city_m:
-                            address = stripped[stripped.rfind(" ", 0, city_m.start()) + 1: city_m.end()].strip()
+                            space_pos = stripped.rfind(" ", 0, city_m.start())
+                            addr_start = space_pos + 1 if space_pos >= 0 else 0
+                            address = stripped[addr_start: city_m.end()].strip()
 
                     # Remove stray corporate-suffix tokens (Inc., LLC, etc.) that PDF
                     # column reflow inserts between street and city.

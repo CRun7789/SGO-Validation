@@ -33,7 +33,7 @@ HEADERS = {
 class Result:
     url: str
     status: int | None
-    blocked: bool
+    blocked: bool | None
     reason: str
 
 def check_site(url: str, session: requests.Session) -> Result:
@@ -184,12 +184,6 @@ _TRAILING_PHONE_RE = re.compile(
 # Trailing website or address junk after an org name, e.g. " www.org.org PO Box"
 _TRAILING_URL_RE = re.compile(r"\s+(?:www\.|https?://)\S+.*$", re.IGNORECASE)
 _TRAILING_PO_RE = re.compile(r"\s+P\.?O\.?\s+Box.*$", re.IGNORECASE)
-
-# Two-word string that looks like a person name (no corporate/org indicators)
-_ORG_INDICATORS_RE = re.compile(
-    r"\b(Inc|LLC|Ltd|Corp|Foundation|Fund|Scholarship|Organization|Academy|School|Church|Institute|Association|Society|Coalition|Network|Program|Center|Centre|Trust|Ministry|Ministries|Community|Catholic|Christian|Jewish|Lutheran|Baptist|Methodist)\b",
-    re.IGNORECASE,
-)
 
 # Trailing bracket status annotation, e.g. "[no contributions received]"
 _TRAILING_BRACKET_RE = re.compile(r"\s*\[.+\]$")
@@ -364,4 +358,5 @@ def run(output_path: str = "sgo_lists.csv") -> None:
     write_results(all_sgos, output_path)
 
 
-run()
+if __name__ == "__main__":
+    run()
