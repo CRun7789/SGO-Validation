@@ -19,7 +19,12 @@ except ImportError as e:
     raise ImportError("python-docx is required: pip install python-docx") from e
 
 MAX_BYTES = 50_000_000
-HEADER_WORDS = {"name", "organization", "sgo", "scholarship", "no.", "#", "entity"}
+HEADER_WORDS = {"name", "organization", "sgo", "scholarship", "no.", "#", "entity", "document"}
+
+
+def _is_header(text: str) -> bool:
+    words = text.lower().split()
+    return bool(words) and words[0] in HEADER_WORDS
 
 
 def parse_xlsx(xlsx_bytes: bytes, state: str, url: str) -> list[SGO]:
@@ -39,7 +44,7 @@ def parse_xlsx(xlsx_bytes: bytes, state: str, url: str) -> list[SGO]:
         if not row:
             continue
         first = str(row[0]).strip() if row[0] is not None else ""
-        if not first or first.lower() in HEADER_WORDS or first.lower().startswith("name"):
+        if not first or _is_header(first):
             continue
         try:
             results.append(SGO(state=state, name=first, ein=None, raw_source=url))
@@ -54,29 +59,89 @@ def parse_xlsx(xlsx_bytes: bytes, state: str, url: str) -> list[SGO]:
     return results
 
 
+_CSV_COL_ALIASES: dict[str, list[str]] = {
+    "name":    ["organization name", "name", "sgo name", "sto name", "organization"],
+    "ein":     ["ein", "federal tax id", "tax id", "fein"],
+    "address": ["address #1", "address", "mailing address", "street address"],
+    "address2":["address #2"],
+    "address3":["address #3"],
+    "phone":   ["telephone", "phone", "phone number"],
+    "email":   ["e-mail", "email"],
+    "website": ["web-site", "website", "url", "web address", "sto website"],
+}
+
+
+def _col_index(headers: list[str], aliases: list[str]) -> int | None:
+    """Return the index of the first header that matches any alias (case-insensitive)."""
+    hl = [h.strip().lower() for h in headers]
+    for alias in aliases:
+        if alias in hl:
+            return hl.index(alias)
+    return None
+
+
 def parse_csv(csv_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
     Read a CSV file and extract one SGO per row.
 
-    Assumes the first column contains org names; skips the header row.
+    Reads the header row to locate name, EIN, address, phone, email, and
+    website columns when present; falls back to first-column-only if the
+    header row is absent or unrecognised.
     """
     if len(csv_bytes) > MAX_BYTES:
         raise ValueError(f"CSV from {url} exceeds size limit")
 
     text = csv_bytes.decode("utf-8", errors="replace")
     reader = csv.reader(io.StringIO(text))
-    results = []
+    rows = list(reader)
+    if not rows:
+        raise ValueError(f"No SGO names extracted from CSV: {url}")
 
-    for i, row in enumerate(reader):
+    # Detect header row
+    col: dict[str, int | None] = {}
+    data_start = 0
+    first_vals = [v.strip() for v in rows[0]]
+    if first_vals and _is_header(first_vals[0]):
+        for field, aliases in _CSV_COL_ALIASES.items():
+            col[field] = _col_index(first_vals, aliases)
+        data_start = 1
+    else:
+        col = {f: None for f in _CSV_COL_ALIASES}
+
+    def _cell(row: list[str], field: str) -> str | None:
+        idx = col.get(field)
+        if idx is not None and idx < len(row):
+            v = row[idx].strip()
+            return v or None
+        return None
+
+    results = []
+    for row in rows[data_start:]:
         if not row:
             continue
-        first = row[0].strip()
-        if i == 0 and (not first or first.lower() in HEADER_WORDS or first.lower().startswith("name")):
-            continue  # skip header
-        if not first:
+        name = _cell(row, "name") or (row[0].strip() if row else "")
+        if not name:
             continue
+
+        # Combine multi-part address fields
+        addr_parts = [
+            _cell(row, "address"),
+            _cell(row, "address2"),
+            _cell(row, "address3"),
+        ]
+        address = ", ".join(p for p in addr_parts if p) or None
+
         try:
-            results.append(SGO(state=state, name=first, ein=None, raw_source=url))
+            results.append(SGO(
+                state=state,
+                name=name,
+                ein=_cell(row, "ein"),
+                raw_source=url,
+                address=address,
+                phone=_cell(row, "phone"),
+                email=_cell(row, "email"),
+                website=_cell(row, "website"),
+            ))
         except ValueError:
             pass
 
@@ -102,7 +167,7 @@ def parse_docx(docx_bytes: bytes, state: str, url: str) -> list[SGO]:
     for table in doc.tables:
         for row in table.rows:
             first = row.cells[0].text.strip() if row.cells else ""
-            if not first or first.lower() in HEADER_WORDS or first.lower().startswith("name"):
+            if not first or _is_header(first):
                 continue
             try:
                 results.append(SGO(state=state, name=first, ein=None, raw_source=url))
