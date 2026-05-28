@@ -27,9 +27,8 @@ def check_site(url: str, session: requests.Session) -> Result:
 
         # Detect soft blocks (200 OK but actually a challenge page)
         block_signals = [
-            "captcha", "cf-challenge", "just a moment",  # Cloudflare
-            "access denied", "bot detected", "are you human",
-            "checking your browser", "ddos-guard",
+            "just a moment", "access denied", "bot detected",
+            "are you human", "checking your browser", "ddos-guard",
         ]
         soft_blocked = any(sig in html for sig in block_signals)
 
@@ -79,8 +78,7 @@ urls = {
     "VA download Word list": "https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000",   
 }
 
-blocked_urls = { # As of 5/22 3pm
-    "AL page list": "Soft block / challenge page",
+blocked_urls = { # As of 5/28 3pm
     "FL page list": "403 Forbidden",
     "NH page source": "403 Forbidden",
     "NH pdf list": "403 Forbidden",
