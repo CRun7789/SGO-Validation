@@ -113,7 +113,7 @@ def filter_by_irs_criteria(df):
     return filtered_df
 
 # Here is where you can edit the amount of months to narrow the dataset down to!
-def filter_by_recent_ruling_date(df, months=6, ruling_column='RULING'):
+def filter_by_recent_ruling_date(df, months=5, ruling_column='RULING'):
     """
     Filter to keep only rows with ruling dates within the last 'months' months.
     Ruling date is in YYYYMM format (e.g., 202201 for January 2022).

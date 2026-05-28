@@ -145,6 +145,7 @@ CERTIFIED_BY_STATE = {
         "Sagamore Institute Scholarships for Education",
         "Scholarship Granting Organization of Northeast Indiana, Inc.",
         "The Lutheran Scholarship Granting Organization of Indiana, Inc.",
+        "The Lutheran Federal Scholarship Granting Organization of Indiana, Inc.",
     },
     "ia": {
         "MISSISSIPPI VALLEY SCHOOL TUITIONORGANIZATION INC",
@@ -659,7 +660,7 @@ def _score_row(row, certified_for_state):
         natural_path = 'UNCLASSIFIED'
 
     if norm_name in certified_for_state:
-        return 100, 'CERTIFIED'
+        return 101, 'CERTIFIED'
 
     deductibility    = _to_int(row.get('DEDUCTIBILITY'))
     pf_filing_req_cd = _to_int(row.get('PF_FILING_REQ_CD'))

@@ -169,6 +169,8 @@ def _export_excel(df, path):
     from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
     from openpyxl.worksheet.filters import FilterColumn, Filters
+    from openpyxl.formatting.rule import CellIsRule
+    from openpyxl.styles import PatternFill
 
     # ── 1. Build business address ────────────────────────────────────────────
     def _address(row):
@@ -286,6 +288,10 @@ def _export_excel(df, path):
             # Hide raw IRS columns, Region, and score sub-columns
             if col_idx <= n_raw_hidden or col_name == 'Region' or col_name in score_sub:
                 dim.hidden = True
+            
+        # Highlight orgs with a score >80 as 'yes, reach out'
+        rule = CellIsRule(operator='greaterThan', formula=['79.9'], fill=PatternFill(start_color='A8EBA7', end_color='A8EBA7', fill_type='solid'))
+        ws.conditional_formatting.add('AI2:AI1000000', rule)
 
         # ── Header row height ────────────────────────────────────────────────
         ws.row_dimensions[1].height = 28
@@ -297,33 +303,6 @@ def _export_excel(df, path):
         ws.auto_filter.ref = (
             f"A1:{get_column_letter(len(all_headers))}1"
         )
-
-        # ── Filter out CERTIFIED organizations ───────────────────────────────
-        scoring_method_col_idx = None
-        for idx, col_name in enumerate(all_headers, start=1):
-            if col_name == 'Scoring Method':
-                scoring_method_col_idx = idx
-                break
-
-        if scoring_method_col_idx is not None:
-            # Collect all unique values in Scoring Method column
-            all_values = set()
-            for row_idx in range(2, ws.max_row + 1):
-                cell_value = ws.cell(row=row_idx, column=scoring_method_col_idx).value
-                if cell_value:
-                    all_values.add(str(cell_value))
-
-            # Create filter with all values except 'CERTIFIED'
-            visible_values = sorted([v for v in all_values if v != 'CERTIFIED'])
-            filters_obj = Filters()
-            for v in visible_values:
-                filters_obj.filter.append(v)
-
-            flt = FilterColumn(colId=scoring_method_col_idx - 1, filters=filters_obj)
-            ws.auto_filter.filterColumn.append(flt)
-
-            # NOTE: Do not explicitly hide rows here; rely on the AutoFilter
-            # to exclude 'CERTIFIED' values so users can toggle visibility.
 
 
 if __name__ == "__main__":
