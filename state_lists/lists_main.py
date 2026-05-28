@@ -18,6 +18,7 @@ from models import SGO
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
+from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
@@ -111,13 +112,25 @@ def fetch_bytes(url: str, session: requests.Session) -> bytes:
     r.raise_for_status()
     return r.content
 
+_STATE_PDF_PARSERS = {
+    "az": parse_pdf_az,
+    "ks": parse_pdf_ks,
+    "nv": parse_pdf_nv,
+}
+
+
 def get_parser(name: str):
     """
     Return the appropriate parser based on the key name from the urls dict.
     Key names already encode the type ("pdf list", "xlsx list", etc.).
+    State-specific PDF parsers override the generic one for AZ, KS, and NV.
     """
     n = name.lower()
     if "pdf" in n:
+        state_code = name[:2].lower()
+        state_parser = _STATE_PDF_PARSERS.get(state_code)
+        if state_parser:
+            return lambda content, state, url: state_parser(content, state, url)
         return lambda content, state, url: parse_pdf(content, state, url)
     if "xlsx" in n:
         return lambda content, state, url: parse_xlsx(content, state, url)
@@ -150,7 +163,7 @@ _NON_SGO_STARTS = (
     "organizations (sgos)", "sto name", "sgo name",
     "school tuition organizations certified",
     "scholarship granting organizations certified",
-    "scholarship organization",                 # header row: "Scholarship Organization"
+    "scholarship organization name",            # column header "Scholarship Organization Name"
     "name address", "address city", "mailing address",
     "add me to your", "get on ",
 )
@@ -244,6 +257,10 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
         if not _is_sgo(name):
             removed += 1
             continue
+        # Convert ALL CAPS names to Title Case, but only if the name has spaces
+        # (single-word/hyphenated acronyms like CISE-SGO are left alone)
+        if name.isupper() and " " in name:
+            name = name.title()
         # Strip trailing status annotations, phones, URLs, and address junk
         name = _TRAILING_BRACKET_RE.sub("", name).strip()
         name = _TRAILING_PHONE_RE.sub("", name).strip()
@@ -270,7 +287,33 @@ def write_results(sgos: list[SGO], path: str) -> None:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(asdict(s) for s in sgos)
-    print(f"\nWrote {len(sgos)} SGO records to {path}")
+    print(f"Wrote {len(sgos)} SGO records to {path}")
+
+    xlsx_path = path.replace(".csv", ".xlsx")
+    export_xlsx(sgos, fieldnames, xlsx_path)
+
+
+def export_xlsx(sgos: list[SGO], fieldnames: list[str], path: str) -> None:
+    """Write SGO records to an Excel file with columns auto-fitted to their content."""
+    import openpyxl
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    ws.append(fieldnames)
+
+    col_widths = [len(h) for h in fieldnames]
+    for sgo in sgos:
+        row = [getattr(sgo, f) or "" for f in fieldnames]
+        ws.append(row)
+        for i, val in enumerate(row):
+            col_widths[i] = max(col_widths[i], len(str(val)))
+
+    for i, width in enumerate(col_widths, start=1):
+        ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width + 2
+
+    wb.save(path)
+    print(f"Wrote {len(sgos)} SGO records to {path}")
 
 
 def check_urls():
