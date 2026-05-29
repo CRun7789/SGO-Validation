@@ -1,10 +1,10 @@
 """
-Check whether the direct download links in lists_main.py are still current.
+Check whether the direct download links in sources.py are still current.
 
 For each state that has a stable "source page" pointing to an annual file
 (PDF, XLSX, CSV, DOCX), this script:
   1. Fetches the source page and scans its links for the current download.
-  2. Compares the discovered URL to the one hardcoded in lists_main.py.
+  2. Compares the discovered URL to the one hardcoded in sources.py.
   3. If they differ, prints a diff and prompts you to apply the update.
 
 Usage:
@@ -30,13 +30,11 @@ try:
 except ImportError as e:
     raise ImportError("beautifulsoup4 is required: pip install beautifulsoup4") from e
 
-# ---------------------------------------------------------------------------
-# Reuse headers and session from lists_main
-# ---------------------------------------------------------------------------
 sys.path.insert(0, str(Path(__file__).parent))
-from lists_main import HEADERS, session, urls as CURRENT_URLS
+from sources import HEADERS, urls as CURRENT_URLS, manual_sources
+from fetcher import session
 
-LISTS_MAIN_PATH = Path(__file__).parent / "lists_main.py"
+SOURCES_PATH = Path(__file__).parent / "sources.py"
 
 # ---------------------------------------------------------------------------
 # LINK_HINTS
@@ -45,7 +43,7 @@ LISTS_MAIN_PATH = Path(__file__).parent / "lists_main.py"
 #
 # source_page_url: the stable program/info page that always links to the
 #                  current download file.  Copied from the "XX page source"
-#                  entries in lists_main.py — nothing new to maintain.
+#                  entries in sources.py — nothing new to maintain.
 #
 # href_regex: a pattern matched against every <a href> on that page.
 #             Narrow enough to pick the right file; loose enough that a
@@ -59,6 +57,12 @@ LISTS_MAIN_PATH = Path(__file__).parent / "lists_main.py"
 #   The pattern  r"sgo-directory.*\.pdf"  matches both.
 # ---------------------------------------------------------------------------
 LINK_HINTS: dict[str, tuple[str, str]] = {
+    # FL's source page is currently blocked (403), so this will report "no link found"
+    # each run — but the entry ensures we're notified if access is ever restored.
+    "FL": (
+        "https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/",
+        r"sgo|scholarship.granting",
+    ),
     "AZ": (
         "https://azdor.gov/tax-credits/certification-school-tuition-organizations",
         r"REPORTS_sto-i.*\.pdf",  # "i" = individual donations list (not "c" = corporate)
@@ -125,14 +129,17 @@ def find_download_link(source_url: str, pattern: str, sess: requests.Session) ->
     return None
 
 
-def _current_download_url(state: str) -> tuple[str, str] | None:
+_YEAR_RE = re.compile(r"\b(20\d{2})\b")
+_FILE_TYPES = {"pdf", "xlsx", "csv", "excel", "word", "download"}
+
+
+def _current_download_url(state: str, urls_dict: dict[str, str]) -> tuple[str, str] | None:
     """
-    Return (dict_key, url) for the download entry belonging to state in CURRENT_URLS.
+    Return (dict_key, url) for the download entry belonging to state in urls_dict.
     Looks for the key that starts with the state code and contains a file-type word.
     """
-    file_types = {"pdf", "xlsx", "csv", "excel", "word", "download"}
-    for key, url in CURRENT_URLS.items():
-        if key[:2].upper() == state.upper() and any(ft in key.lower() for ft in file_types):
+    for key, url in urls_dict.items():
+        if key[:2].upper() == state.upper() and any(ft in key.lower() for ft in _FILE_TYPES):
             return key, url
     return None
 
@@ -148,13 +155,12 @@ def _updated_key(old_key: str, old_url: str, new_url: str) -> str:
         new_url = ".../sgo-directory-05122027.pdf"   → year 2027
         → returns "KS pdf list 05-2027"
     """
-    year_re = re.compile(r"\b(20\d{2})\b")
-    key_years = year_re.findall(old_key)
+    key_years = _YEAR_RE.findall(old_key)
     if not key_years:
         return old_key
 
-    old_url_years = year_re.findall(old_url)
-    new_url_years = year_re.findall(new_url)
+    old_url_years = _YEAR_RE.findall(old_url)
+    new_url_years = _YEAR_RE.findall(new_url)
     if not old_url_years or not new_url_years:
         return old_key
 
@@ -167,26 +173,26 @@ def _updated_key(old_key: str, old_url: str, new_url: str) -> str:
 
 
 def apply_update(old_key: str, old_url: str, new_url: str) -> None:
-    """Rewrite lists_main.py, replacing old_url (and old_key if dated) in place."""
-    text = LISTS_MAIN_PATH.read_text(encoding="utf-8")
+    """Rewrite sources.py, replacing old_url (and old_key if dated) in place."""
+    text = SOURCES_PATH.read_text(encoding="utf-8")
 
     new_key = _updated_key(old_key, old_url, new_url)
 
     # Replace URL first, then key name (avoids double-replacement)
     if old_url not in text:
-        print(f"  [ERROR] Could not find old URL in {LISTS_MAIN_PATH.name} — skipping.")
+        print(f"  [ERROR] Could not find old URL in {SOURCES_PATH.name} — skipping.")
         return
 
     text = text.replace(old_url, new_url)
     if new_key != old_key:
         text = text.replace(f'"{old_key}"', f'"{new_key}"')
 
-    LISTS_MAIN_PATH.write_text(text, encoding="utf-8")
+    SOURCES_PATH.write_text(text, encoding="utf-8")
 
     if new_key != old_key:
         print(f"  Updated key:  {old_key!r}  →  {new_key!r}")
     print(f"  Updated URL:  {old_url}\n           →  {new_url}")
-    print(f"  Saved {LISTS_MAIN_PATH.name}.")
+    print(f"  Saved {SOURCES_PATH.name}.")
 
 
 def check_all_links(urls_dict: dict[str, str]) -> None:
@@ -196,7 +202,7 @@ def check_all_links(urls_dict: dict[str, str]) -> None:
     """
     changed = 0
     for state, (source_url, pattern) in LINK_HINTS.items():
-        entry = _current_download_url(state)
+        entry = _current_download_url(state, urls_dict)
         if entry is None:
             print(f"[{state}] No download entry found in urls dict — skipping.")
             continue
@@ -217,6 +223,13 @@ def check_all_links(urls_dict: dict[str, str]) -> None:
         # URLs differ — show diff and prompt
         changed += 1
         print(f"\n  OLD: {old_url}\n  NEW: {discovered}")
+
+        # If this state uses a manually-downloaded file, warn that it may be stale
+        if old_key in manual_sources:
+            manual_path = SOURCES_PATH.parent / manual_sources[old_key]
+            print(f"  *** Manual file may be stale: {manual_path}")
+            print(f"  *** Re-download from the new URL and replace that file.")
+
         try:
             answer = input("  Apply this change? [y/N]: ").strip().lower()
         except EOFError:

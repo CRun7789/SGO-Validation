@@ -1,116 +1,21 @@
 import csv
 import re
 import sys
-import requests
 import time
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-from dataclasses import dataclass, asdict
-import urllib3
+from dataclasses import asdict
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# ---------------------------------------------------------------------------
-# Parsers (import here so missing deps surface immediately at startup)
-# ---------------------------------------------------------------------------
-sys.path.insert(0, __file__.replace("lists_main.py", ""))  # ensure local imports work
 from models import SGO
+from sources import urls, blocked_urls, manual_sources
+
+_HERE = Path(__file__).parent  # state_lists/ — used to resolve manual file paths
+from fetcher import fetch_bytes, check_site, session
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
-from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xhtml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-}
-
-@dataclass
-class Result:
-    url: str
-    status: int | None
-    blocked: bool | None
-    reason: str
-
-def check_site(url: str, session: requests.Session) -> Result:
-    try:
-        r = session.get(url, headers=HEADERS, timeout=10, allow_redirects=True, verify=False) # don't verify SSL for now
-        html = r.text.lower()
-
-        # Detect soft blocks (200 OK but actually a challenge page)
-        block_signals = [
-            "just a moment", "access denied", "bot detected",
-            "are you human", "checking your browser", "ddos-guard",
-        ]
-        soft_blocked = any(sig in html for sig in block_signals)
-
-        if r.status_code == 403:
-            return Result(url, r.status_code, True, "403 Forbidden")
-        elif r.status_code == 429:
-            return Result(url, r.status_code, True, "Rate limited")
-        elif soft_blocked:
-            return Result(url, r.status_code, True, "Soft block / challenge page")
-        else:
-            return Result(url, r.status_code, False, "OK")
-
-    except requests.exceptions.SSLError:
-        return Result(url, None, True, "SSL error")
-    except requests.exceptions.ConnectionError:
-        return Result(url, None, None, "Connection failed (down or unreachable)")
-    except requests.exceptions.Timeout:
-        return Result(url, None, None, "Timeout")
-
-urls = {
-    "AL page list": "https://www.revenue.alabama.gov/legal/annual-public-report-information/",
-    "AZ page source": "https://azdor.gov/tax-credits/certification-school-tuition-organizations",
-    "AZ pdf list": "https://azdor.gov/sites/default/files/2023-06/REPORTS_sto-i-list.pdf",
-    "FL page list": "https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/",
-    "GA page list": "https://dor.georgia.gov/student-scholarship-organization-audit-reports",
-    "IN page source": "https://www.in.gov/doe/students/indiana-choice-scholarship-program/school-scholarships/",
-    "IN pdf list": "https://www.in.gov/doe/files/Certified-SGOs.pdf",
-    "KS page source": "https://www.ksde.gov/search-results?indexCatalogue=whole-site&searchQuery=SGO",
-    "KS pdf list 05-2026": "https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf",
-    # LA: program page only links to annual reports (school performance data), no machine-readable STO list available yet
-    # "LA page list": "https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program",
-    "MO page source": "https://www.treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList",
-    "MO xlsx list": "https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx",
-    "MT page list": "https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO",
-    "NV page source": "https://doe.nv.gov/offices/office-of-student-and-school-supports/private-schools/nevada-educational-choice-scholarship-program-opportunity-scholarship",
-    "NV pdf list": "https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf",
-    "NH page source": "https://www.revenue.nh.gov/taxes-glance/tax-credit-programs/nh-education-tax-credit-program",
-    "NH pdf list": "https://www.revenue.nh.gov/sites/g/files/ehbemt736/files/documents/scholarship-organizations-approved-2025-2026.pdf",
-    "OH page list": "https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List",
-    "PA page list": "https://dced.pa.gov/scholarship-organizations/",
-    "PA download Excel list": "https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv",
-    "RI page source": "https://tax.ri.gov/tax-sections/credits/scholarship-credit",
-    "RI pdf list": "https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf",
-    # SC: ECENC program administered by single org (Exceptional SC); no list page with multiple SGOs
-    # "SC page list": "https://dor.sc.gov/tax-credits/ecenc-program-credits",
-    "SD page source": "https://dlr.sd.gov/insurance/tax_credit_program.aspx",
-    "SD pdf list": "https://dlr.sd.gov/insurance/tax_credit_program/documents/sgo_participation_list.pdf",
-    "VA page source": "https://www.doe.virginia.gov/data-policy-funding/school-finance/education-improvement-scholarships-tax-credits-program",
-    "VA download Word list": "https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000",   
-}
-
-blocked_urls = { # As of 5/28 3pm
-    "FL page list": "403 Forbidden",
-    "NH page source": "403 Forbidden",
-    "NH pdf list": "403 Forbidden",
-    "VA page source": "403 Forbidden",
-    "VA download Word list": "403 Forbidden"
-}
-
-session = requests.Session()  # reuse TCP connections, stores cookies
-
-def fetch_bytes(url: str, session: requests.Session) -> bytes:
-    """Download raw bytes from url. Raises requests.HTTPError on non-2xx."""
-    r = session.get(url, headers=HEADERS, timeout=15, allow_redirects=True, verify=False)
-    r.raise_for_status()
-    return r.content
+from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl
 
 _STATE_PDF_PARSERS = {
     "az": parse_pdf_az,
@@ -118,16 +23,21 @@ _STATE_PDF_PARSERS = {
     "nv": parse_pdf_nv,
 }
 
+# State-specific parsers for HTML page-list sources (keyed by 2-letter state code).
+_STATE_HTML_PARSERS = {
+    "fl": parse_html_fl,
+}
+
 
 def get_parser(name: str):
     """
-    Return the appropriate parser based on the key name from the urls dict.
-    Key names already encode the type ("pdf list", "xlsx list", etc.).
-    State-specific PDF parsers override the generic one for AZ, KS, and NV.
+    Return the appropriate parser for a urls-dict entry.
+    Key names encode format ("pdf list", "xlsx list", etc.) and state (first 2 chars).
+    State-specific parsers override the generic ones for AZ, KS, NV (PDF) and FL (HTML).
     """
     n = name.lower()
+    state_code = name[:2].lower()
     if "pdf" in n:
-        state_code = name[:2].lower()
         state_parser = _STATE_PDF_PARSERS.get(state_code)
         if state_parser:
             return lambda content, state, url: state_parser(content, state, url)
@@ -138,11 +48,16 @@ def get_parser(name: str):
         return lambda content, state, url: parse_csv(content, state, url)
     if "word" in n:
         return lambda content, state, url: parse_docx(content, state, url)
-    # HTML sources: "page list" uses table extraction, "page source" uses list extraction
+    # HTML sources — check for state-specific parser first
+    html_parser = _STATE_HTML_PARSERS.get(state_code)
+    if html_parser:
+        return lambda content, state, url: html_parser(content.decode("utf-8", errors="replace"), state, url)
     if "page list" in n:
         return lambda content, state, url: parse_html_table(content.decode("utf-8", errors="replace"), state, url)
     return lambda content, state, url: parse_html_list(content.decode("utf-8", errors="replace"), state, url)
 
+
+# ── post-processing ──────────────────────────────────────────────────────────
 
 _CID_MAP = {
     "(cid:415)": "ti",  # 'ti' ligature in certain PDF fonts
@@ -166,6 +81,9 @@ _NON_SGO_STARTS = (
     "scholarship organization name",            # column header "Scholarship Organization Name"
     "name address", "address city", "mailing address",
     "add me to your", "get on ",
+    "contact:",                                 # "Contact: Name, Title" lines
+    "approved scholarship",                     # NH PDF section header fragment
+    "program year",                             # "2025-2026 Program Year" header
 )
 
 # Job-title pattern: "Firstname Lastname, Title [more words]"
@@ -181,22 +99,19 @@ _TRAILING_PHONE_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Trailing website or address junk after an org name, e.g. " www.org.org PO Box"
-_TRAILING_URL_RE = re.compile(r"\s+(?:www\.|https?://)\S+.*$", re.IGNORECASE)
-_TRAILING_PO_RE = re.compile(r"\s+P\.?O\.?\s+Box.*$", re.IGNORECASE)
-
-# Trailing bracket status annotation, e.g. "[no contributions received]"
+_TRAILING_URL_RE    = re.compile(r"\s+(?:www\.|https?://)\S+.*$", re.IGNORECASE)
+_TRAILING_PO_RE     = re.compile(r"\s+P\.?O\.?\s+Box.*$", re.IGNORECASE)
 _TRAILING_BRACKET_RE = re.compile(r"\s*\[.+\]$")
 
 _NON_SGO_PATTERNS = [
     re.compile(r, re.IGNORECASE) for r in [
-        r"^\(?\d{4}[-–]\d{4}\)?$",                         # year range: 2025-2026
+        r"^\(?\d{4}[-–]\d{4}\)?\s*(\w.*)?$",                 # year range: 2025-2026 or "2025-2026 Program Year"
         r"^\(updated .+\)$",                                # (updated April, 2026)
         r"^\(?\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}$",           # bare phone number
         r"^[\w.+\-]+@[\w\-]+\.[a-z]{2,}$",                 # bare email address
         r"^https?://",                                      # bare URL
         r"^www\.",                                          # bare URL
-        # Street address: starts with a number + optional direction + any words + a street type
+        # Street address: starts with a number + optional direction + street type
         r"^\d{1,6}[,.\s]+(W\.?|E\.?|N\.?|S\.?|West|East|North|South)?\s*.{0,60}\b(Street|St\b|Ave\b|Avenue|Blvd|Boulevard|Rd\b|Road|Dr\b|Drive|Way\b|Lane\b|Ln\b|Pkwy|Parkway|Circle|Ct\b|Court|Suite|Ste\b)\b",
         # Line with embedded email (contact-person lines like "Name, Title email@org")
         r"\S+@\S+\.\w{2,}",
@@ -206,6 +121,8 @@ _NON_SGO_PATTERNS = [
         r"\b[A-Z]{2}\s+\d{5}\b",
         # Website embedded in what looks like contact info: ends with ".org" or ".com" alone
         r"\b\w+\.(org|com|net|edu)\s*$",
+        # Single structural word (e.g. "ORGANIZATION", "Organization") — never an org name alone
+        r"^(Organization|Scholarship|Foundation|Institute|Fund|Association|Corporation|Society)s?$",
     ]
 ]
 
@@ -219,7 +136,7 @@ def _fix_cids(text: str) -> str:
 
 
 def _is_sgo(name: str) -> bool:
-    """Return True if the name looks like an actual org, not a header/footer/contact line."""
+    """Return True if name looks like an actual org, not a header/footer/contact line."""
     t = name.strip()
     if len(t) < 4:
         return False
@@ -236,26 +153,25 @@ def _is_sgo(name: str) -> bool:
 def postprocess(sgos: list[SGO]) -> list[SGO]:
     """
     Clean the extracted SGO list before writing:
-      1. Replace known PDF encoding artifacts (e.g. (cid:415) → t).
-      2. Remove entries that are obviously not org names (headers, addresses,
-         phone/email lines, legislative preamble, date strings, etc.).
-      3. Deduplicate within each state (same name + same state = one record).
+      1. Replace known PDF encoding artifacts.
+      2. Remove entries that are obviously not org names.
+      3. Deduplicate within each state.
     """
     cleaned: list[SGO] = []
     seen: set[tuple[str, str]] = set()
-
     removed = 0
+
     for sgo in sgos:
         name = _fix_cids(sgo.name)
-        # Filter original before stripping — catches lines whose full content is contact info
         if not _is_sgo(name):
             removed += 1
             continue
-        # Convert ALL CAPS names to Title Case, but only if the name has spaces
-        # (single-word/hyphenated acronyms like CISE-SGO are left alone)
         if name.isupper() and " " in name:
-            name = name.title()
-        # Strip trailing status annotations, phones, URLs, and address junk
+            # str.title() capitalises after apostrophes ("Children'S") — use re instead.
+            # Exclude straight apostrophe (U+0027) and curly right-quote (U+2019) from the
+            # lookbehind so "children's" and "children’s" both stay lowercase after the quote.
+            name = re.sub(r"(?<![\w'’])(\w)", lambda m: m.group().upper(),
+                          name.lower())
         name = _TRAILING_BRACKET_RE.sub("", name).strip()
         name = _TRAILING_PHONE_RE.sub("", name).strip()
         name = _TRAILING_URL_RE.sub("", name).strip()
@@ -270,35 +186,38 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
         sgo.name = name
         cleaned.append(sgo)
 
-    print(f"\nPost-processing: removed {removed} non-SGO entries, {len(sgos) - removed - len(cleaned)} duplicates → {len(cleaned)} records remain")
+    print(f"\nPost-processing: removed {removed} non-SGO entries, "
+          f"{len(sgos) - removed - len(cleaned)} duplicates → {len(cleaned)} records remain")
     return cleaned
 
 
+# ── output ───────────────────────────────────────────────────────────────────
+
+_FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "source"]
+
+
 def write_results(sgos: list[SGO], path: str) -> None:
-    """Write extracted SGO records to a CSV file."""
-    fieldnames = ["state", "name", "ein", "address", "phone", "email", "website", "raw_source"]
+    """Write SGO records to a CSV and a matching Excel file."""
     with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=_FIELDNAMES)
         writer.writeheader()
         writer.writerows(asdict(s) for s in sgos)
     print(f"Wrote {len(sgos)} SGO records to {path}")
 
     xlsx_path = path.replace(".csv", ".xlsx")
-    export_xlsx(sgos, fieldnames, xlsx_path)
+    _export_xlsx(sgos, xlsx_path)
 
 
-def export_xlsx(sgos: list[SGO], fieldnames: list[str], path: str) -> None:
-    """Write SGO records to an Excel file with columns auto-fitted to their content."""
+def _export_xlsx(sgos: list[SGO], path: str) -> None:
     import openpyxl
 
     wb = openpyxl.Workbook()
     ws = wb.active
+    ws.append(_FIELDNAMES)
 
-    ws.append(fieldnames)
-
-    col_widths = [len(h) for h in fieldnames]
+    col_widths = [len(h) for h in _FIELDNAMES]
     for sgo in sgos:
-        row = [getattr(sgo, f) or "" for f in fieldnames]
+        row = [getattr(sgo, f) or "" for f in _FIELDNAMES]
         ws.append(row)
         for i, val in enumerate(row):
             col_widths[i] = max(col_widths[i], len(str(val)))
@@ -310,16 +229,77 @@ def export_xlsx(sgos: list[SGO], fieldnames: list[str], path: str) -> None:
     print(f"Wrote {len(sgos)} SGO records to {path}")
 
 
-def check_urls():
-    print(f"\nThis function will check {len(urls)} URLs to see if they can be accessed by Python.\n")
+# ── pipeline entry points ────────────────────────────────────────────────────
 
+def check_urls() -> None:
+    """
+    Check every URL in the registry for reachability and report its status,
+    cross-referencing blocked_urls and manual_sources to catch:
+
+      - Newly blocked URLs not yet in blocked_urls
+      - Previously blocked URLs that have come back online
+      - Manual files that are no longer needed because the URL is now accessible
+      - Blocked URLs that have a manual file covering them (expected, informational)
+      - Blocked URLs with no fallback at all (need attention)
+    """
+    print(f"\nChecking {len(urls)} URLs ...\n")
     for name, url in urls.items():
-        print(f"-----------\nChecking {name} - {url}")
-        result = check_site(url, session)
-        status = f"[{result.status}]" if result.status else "[---]"
-        flag = "🚫 BLOCKED" if result.blocked else ("✅ OK" if result.blocked is False else "⚠️  UNKNOWN")
-        print(f"{flag} {status} {result.url}  —  {result.reason}")
-        time.sleep(1)  # be polite; also reduces rate-limit triggers
+        print(f"-----------\nChecking {name}")
+        result = check_site(url)
+        status  = f"[{result.status}]" if result.status else "[---]"
+        is_blocked  = bool(result.blocked)   # True or None both mean not fully OK
+        is_ok       = result.blocked is False
+        in_blocklist = name in blocked_urls
+        has_manual   = name in manual_sources
+        manual_path  = (_HERE / manual_sources[name]) if has_manual else None
+        manual_exists = has_manual and manual_path.exists()
+
+        if is_ok and not in_blocklist and not has_manual:
+            # Normal case — nothing to flag
+            print(f"✅ OK     {status}  {url}")
+
+        elif is_ok and not in_blocklist and has_manual:
+            # URL is live but a manual file exists — the file is now redundant
+            print(f"✅ OK     {status}  {url}")
+            print(f"  ⚠️  Manual file exists but URL is accessible — remove {manual_path}")
+
+        elif is_ok and in_blocklist and not has_manual:
+            # URL has recovered — blocked_urls entry is stale
+            print(f"✅ OK     {status}  {url}")
+            print(f"  🔄 URL is now accessible — remove '{name}' from blocked_urls in sources.py")
+
+        elif is_ok and in_blocklist and has_manual:
+            # URL has recovered AND a manual file exists — both entries are now redundant
+            print(f"✅ OK     {status}  {url}")
+            print(f"  🔄 URL is now accessible — remove '{name}' from blocked_urls in sources.py")
+            print(f"  ⚠️  Manual file is also redundant — remove {manual_path}")
+
+        elif not is_ok and not in_blocklist and not has_manual:
+            # Newly blocked URL — not in blocklist, no fallback
+            print(f"🚨 NEWLY BLOCKED  {status}  {url}  —  {result.reason}")
+            print(f"  Add '{name}' to blocked_urls in sources.py")
+
+        elif not is_ok and not in_blocklist and has_manual:
+            # Newly blocked but manual file covers it — still flag so blocklist gets updated
+            print(f"🚨 NEWLY BLOCKED  {status}  {url}  —  {result.reason}")
+            print(f"  Add '{name}' to blocked_urls in sources.py")
+            if manual_exists:
+                print(f"  Manual file is covering it: {manual_path}")
+
+        elif not is_ok and in_blocklist and not has_manual:
+            # Expected block, no manual fallback — informational
+            print(f"🚫 BLOCKED  {status}  {url}  —  {result.reason}  (known)")
+
+        elif not is_ok and in_blocklist and has_manual:
+            # Expected block, manual file in use
+            if manual_exists:
+                print(f"🚫 BLOCKED  {status}  {url}  —  {result.reason}  (known, manual file in use: {manual_path.name})")
+            else:
+                print(f"🚫 BLOCKED  {status}  {url}  —  {result.reason}  (known)")
+                print(f"  ⚠️  Manual file is missing — download and place at {manual_path}")
+                print(f"  See manual/README.md for instructions.")
+
+        time.sleep(1)
 
 
 def run(output_path: str = "sgo_lists.csv") -> None:
@@ -327,32 +307,54 @@ def run(output_path: str = "sgo_lists.csv") -> None:
     Fetch and parse every accessible data source; write results to output_path.
 
     Skips:
-    - URLs in blocked_urls (known-blocked as of last check)
     - "page source" keys (navigation/program pages, not data sources)
+    - blocked_urls entries that have no corresponding manual file
+
+    For blocked_urls entries that DO have a manual file in manual_sources,
+    reads the local file instead of attempting a network request.
     """
     all_sgos: list[SGO] = []
 
     for name, url in urls.items():
-        if name in blocked_urls:
-            print(f"[SKIP] {name} — blocked ({blocked_urls[name]})")
-            continue
+        # ── navigation-only pages: never a data source ────────────────────────
         if "page source" in name.lower():
             print(f"[SKIP] {name} — navigation page, no direct list")
             continue
 
+        # ── blocked URLs: fall back to manual file if one exists ──────────────
+        if name in blocked_urls:
+            if name not in manual_sources:
+                print(f"[SKIP] {name} — blocked ({blocked_urls[name]})")
+                continue
+            manual_path = _HERE / manual_sources[name]
+            if not manual_path.exists():
+                print(f"[SKIP] {name} — blocked; manual file not found ({manual_path})")
+                print( "         See manual/README.md for download instructions.")
+                continue
+            print(f"\n[MANUAL] {name} — reading {manual_path.name}")
+            content = manual_path.read_bytes()
+
+        # ── normal network fetch ──────────────────────────────────────────────
+        else:
+            state = name[:2].upper()
+            print(f"\n[{state}] Fetching {name} ...")
+            try:
+                content = fetch_bytes(url)
+            except Exception as e:
+                print(f"  FAILED: {e}")
+                continue
+
+        # ── parse (same dispatcher regardless of source) ──────────────────────
         state = name[:2].upper()
         parser = get_parser(name)
-
-        print(f"\n[{state}] Fetching {name} ...")
         try:
-            content = fetch_bytes(url, session)
             sgos = parser(content, state, url)
             print(f"  → {len(sgos)} SGOs extracted")
             all_sgos.extend(sgos)
         except Exception as e:
             print(f"  FAILED: {e}")
 
-        time.sleep(1)  # be polite
+        time.sleep(1)
 
     all_sgos = postprocess(all_sgos)
     write_results(all_sgos, output_path)

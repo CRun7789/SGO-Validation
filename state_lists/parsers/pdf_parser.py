@@ -16,6 +16,16 @@ except ImportError as e:
 
 MAX_BYTES = 50_000_000  # 50 MB guard against malformed/malicious files
 
+_TABLE_HEADER_WORDS = {
+    "name", "organization", "sgo", "scholarship", "entity",
+    "no.", "#", "tax", "address", "certified", "approved", "list",
+}
+
+_TEXT_SKIP_PREFIXES = (
+    "page ", "date ", "state of ", "department ", "updated ",
+    "name ", "organization ", "scholarship granting", "tax credit",
+)
+
 
 def parse_pdf(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
@@ -54,7 +64,6 @@ def _sgos_from_table(table: list[list[str | None]], state: str, url: str) -> lis
     Heuristic: the first column that looks like an org name column is used.
     Skips header rows (cells that match common header words).
     """
-    HEADER_WORDS = {"name", "organization", "sgo", "scholarship", "entity", "no.", "#", "tax", "address", "certified", "approved", "list"}
     results = []
 
     for row in table:
@@ -68,7 +77,7 @@ def _sgos_from_table(table: list[list[str | None]], state: str, url: str) -> lis
         cleaned = " ".join(candidate.split())
         cleaned_lower = cleaned.lower()
         first_word = cleaned_lower.split()[0] if cleaned_lower.split() else ""
-        if cleaned_lower in HEADER_WORDS or first_word in HEADER_WORDS:
+        if cleaned_lower in _TABLE_HEADER_WORDS or first_word in _TABLE_HEADER_WORDS:
             continue
         # If the cell bundles address+contact after the org name (e.g. KS directory PDFs),
         # extract only the text before the first street-number pattern.
@@ -102,7 +111,6 @@ def _sgos_from_text(text: str, state: str, url: str) -> list[SGO]:
     Fallback: treat each non-blank line as a potential org name.
     Filters out lines that are obviously page numbers, headers, or footers.
     """
-    SKIP_PREFIXES = ("page ", "date ", "state of ", "department ", "updated ", "name ", "organization ", "scholarship granting", "tax credit")
     results = []
 
     for line in text.splitlines():
@@ -111,7 +119,7 @@ def _sgos_from_text(text: str, state: str, url: str) -> list[SGO]:
             continue
         if cleaned.isdigit():
             continue
-        if any(cleaned.lower().startswith(p) for p in SKIP_PREFIXES):
+        if any(cleaned.lower().startswith(p) for p in _TEXT_SKIP_PREFIXES):
             continue
         try:
             results.append(SGO(state=state, name=cleaned, ein=None, raw_source=url))

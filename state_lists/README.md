@@ -77,7 +77,7 @@ which includes it in its published HTML table.
 | MO | Excel (.xlsx) | name only |
 | MT | HTML table | name only |
 | NV | PDF (custom parser) | name, address, phone, email |
-| NH | PDF *(blocked as of 5/2026)* | name only |
+| NH | PDF | name only |
 | OH | HTML table | name, ein, address | ← only state with EIN |
 | PA | CSV download | name, address, phone, email, website |
 | RI | PDF | name only |

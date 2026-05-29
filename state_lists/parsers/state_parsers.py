@@ -1,12 +1,18 @@
 """
-State-specific PDF parsers for AZ, KS, and NV.
+State-specific parsers for AZ, KS, NV (PDF) and FL (HTML).
 
-All three PDFs pack multiple fields into single text runs that the generic
-parser cannot split into columns.  Each parser uses regex to extract the
-available fields from the concatenated text.
+PDF states (AZ, KS, NV) pack multiple fields into single text runs that the
+generic parser cannot split into columns.  Each uses regex to extract fields
+from the concatenated text.
+
+FL uses a hand-saved HTML page whose orgs are not in a table or <li> list but
+in individual <p> tags, each containing an external <a> link (org name +
+website), address/phone as <br/>-separated text, and an obfuscated email via
+javascript:mt('user','domain','','').
 
 Fields extracted by state:
   AZ — name, address, phone, website  (no EIN, no email)
+  FL — name, address, phone, email, website
   KS — name, address, phone, email    (no EIN, no website)
   NV — name, address, phone, email    (no EIN; website unreliable — omitted)
 """
@@ -18,6 +24,11 @@ try:
     import pdfplumber
 except ImportError as e:
     raise ImportError("pdfplumber is required: pip install pdfplumber") from e
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError as e:
+    raise ImportError("beautifulsoup4 is required: pip install beautifulsoup4") from e
 
 MAX_BYTES = 50_000_000
 
@@ -320,5 +331,115 @@ def parse_pdf_nv(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
 
     if not results:
         raise ValueError(f"No SGO names extracted from NV PDF: {url}")
+
+    return results
+
+
+# ── FL ───────────────────────────────────────────────────────────────────────
+#
+# The FL SFO page lists each org as a standalone <p> block:
+#
+#   <p>
+#     <a href="https://orgwebsite.org/" target="_blank">Org Name</a><br/>
+#     P.O. Box 123, City, FL 00000<br/>
+#     Phone/Fax: 555-555-5555<br/>
+#     <a href="javascript:mt('user','domain.org','','')">user@domain.org</a>
+#   </p>
+#
+# The email address is obfuscated via a JS function call; we reconstruct it
+# from the mt() arguments: mt('localpart', 'domain', ...) → localpart@domain.
+# Some orgs omit the email or phone; all have a name link.
+
+_FL_MT_RE = re.compile(r"javascript:mt\('([^']+)','([^']+)'", re.IGNORECASE)
+# Labeled: "Phone/Fax: 888-707-2465"
+_FL_PHONE_LABELED_RE = re.compile(r"(?:Phone|Fax|Tel|Phone/Fax)[^:]*:\s*([\d()\s.\-/]+)", re.IGNORECASE)
+# Bare: a line that is nothing but digits, spaces, dashes, parens — at least 7 chars
+_FL_PHONE_BARE_RE = re.compile(r"^[\d()\s.\-/]{7,}$")
+
+
+def parse_html_fl(html: str, state: str, url: str) -> list[SGO]:
+    """
+    Extract SGOs from the FL SFO page (manually downloaded HTML).
+
+    Finds the content div by id='newPageContent', then iterates every <p>
+    that contains an external <a> link as its first anchor.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Prefer the specific content div; fall back to the article, then body
+    root = (
+        soup.find("div", id="newPageContent")
+        or soup.find("article", id="inner-content")
+        or soup.body
+    )
+    if root is None:
+        raise ValueError(f"Could not find content area in FL HTML: {url}")
+
+    results: list[SGO] = []
+
+    for p in root.find_all("p"):
+        anchors = p.find_all("a", href=True)
+        if not anchors:
+            continue
+
+        # First anchor with an external href is the org name + website
+        name_tag = next(
+            (a for a in anchors if a["href"].startswith(("http://", "https://"))),
+            None,
+        )
+        if name_tag is None:
+            continue
+
+        name = name_tag.get_text(strip=True)
+        website: str | None = name_tag["href"]
+
+        # Skip paragraphs whose body text is boilerplate rather than contact info
+        # (e.g. "Please note: If you are the owner or operator of a private school…")
+        p_body = p.get_text(separator=" ", strip=True)
+        if p_body.lower().startswith("please note"):
+            continue
+
+        # Email: reconstruct from javascript:mt('user','domain','','')
+        email: str | None = None
+        for a in anchors:
+            m = _FL_MT_RE.match(a.get("href", ""))
+            if m:
+                email = f"{m.group(1)}@{m.group(2)}"
+                break
+
+        # Address + phone: <br/>-separated text segments after the name anchor
+        # Collect all NavigableString children (between <br/> tags)
+        raw_lines = [
+            seg.strip()
+            for seg in p.strings
+            if seg.strip() and seg.strip() != name
+        ]
+
+        phone: str | None = None
+        addr_parts: list[str] = []
+        for line in raw_lines:
+            m = _FL_PHONE_LABELED_RE.match(line)
+            if m:
+                phone = m.group(1).strip().rstrip("/")
+            elif _FL_PHONE_BARE_RE.match(line):
+                phone = line.strip()
+            elif "@" not in line:           # skip email display text
+                addr_parts.append(line)
+
+        address: str | None = ", ".join(addr_parts) if addr_parts else None
+
+        try:
+            results.append(SGO(
+                state=state, name=name, ein=None, raw_source=url,
+                address=address,
+                phone=phone,
+                email=email,
+                website=website,
+            ))
+        except ValueError:
+            pass
+
+    if not results:
+        raise ValueError(f"No SGO names extracted from FL HTML: {url}")
 
     return results
