@@ -47,15 +47,14 @@ Prompts before applying updates to `lists_main.py`.
 
 `state`, `name`, `ein`, `address`, `phone`, `email`, `website`, `raw_source`
 
-Not every state provides every field. EIN is currently populated for OH only,
-which includes it in its published HTML table.
+Not every state provides every field.
 
 ---
 
 ## Adding a new state
 
 1. Add an entry to the `urls` dict in `lists_main.py`. The key name controls which
-   parser is used: include `"pdf"`, `"xlsx"`, `"csv"`, `"word"`, or `"page list"` in
+   parser is used: include `"pdf"`, `"xlsx"`, `"csv"`, `"word"`, or `"page`, followed by either `"source"` or `"list"` in
    the key, e.g. `"TX pdf list"`.
 2. If the state's source page links to an annual file, add it to `LINK_HINTS` in
    `link_checker.py` so future URL changes are caught automatically.
@@ -77,9 +76,9 @@ which includes it in its published HTML table.
 | MO | Excel (.xlsx) | name only |
 | MT | HTML table | name only |
 | NV | PDF (custom parser) | name, address, phone, email |
-| NH | PDF *(blocked as of 5/2026)* | name only |
+| NH | PDF *(blocked as of 5/2026)* | N/A |
 | OH | HTML table | name, ein, address | ← only state with EIN |
 | PA | CSV download | name, address, phone, email, website |
 | RI | PDF | name only |
 | SD | PDF | name only |
-| VA | Word (.docx) *(blocked as of 5/2026)* | name only |
+| VA | Word (.docx) *(blocked as of 5/2026)* | N/A |
