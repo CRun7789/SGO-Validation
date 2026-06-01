@@ -1,5 +1,5 @@
 """
-State-specific parsers for AZ, KS, NV (PDF) and FL (HTML).
+State-specific parsers for AZ, KS, NV (PDF) and FL, LA (HTML).
 
 PDF states (AZ, KS, NV) pack multiple fields into single text runs that the
 generic parser cannot split into columns.  Each uses regex to extract fields
@@ -10,10 +10,15 @@ in individual <p> tags, each containing an external <a> link (org name +
 website), address/phone as <br/>-separated text, and an obfuscated email via
 javascript:mt('user','domain','','').
 
+LA lists orgs as <a class="quickLink"> elements inside a
+<div class="QuickLinkList__LinkList"> widget — no table, no <li> items.
+Each anchor text is the org name; the href is the org website.
+
 Fields extracted by state:
   AZ — name, address, phone, website  (no EIN, no email)
   FL — name, address, phone, email, website
   KS — name, address, phone, email    (no EIN, no website)
+  LA — name, website                  (no EIN, address, phone, or email)
   NV — name, address, phone, email    (no EIN; website unreliable — omitted)
 """
 import io
@@ -441,5 +446,55 @@ def parse_html_fl(html: str, state: str, url: str) -> list[SGO]:
 
     if not results:
         raise ValueError(f"No SGO names extracted from FL HTML: {url}")
+
+    return results
+
+
+# ── LA ───────────────────────────────────────────────────────────────────────
+#
+# The LA Tuition Donation Credit page lists each participating STO as an
+# <a class="quickLink"> element inside a single widget div:
+#
+#   <div class="QuickLinkList__LinkList">
+#     <a class="quickLink" href="https://orgwebsite.org/">Org Name</a>
+#     ...
+#   </div>
+#
+# The anchor text is the org name; the href is the org website.
+# No address, phone, or email is present on the page.
+
+def parse_html_la(html: str, state: str, url: str) -> list[SGO]:
+    """
+    Extract STOs from the LA Tuition Donation Credit program page.
+
+    Targets the QuickLinkList widget that holds each participating org as an
+    <a class="quickLink"> anchor; falls back to any quickLink anchor on the page
+    if the wrapper div is absent.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    link_list = soup.find("div", class_="QuickLinkList__LinkList")
+    if link_list:
+        anchors = link_list.find_all("a", class_="quickLink")
+    else:
+        # Fallback: any quickLink anchor on the page
+        anchors = soup.find_all("a", class_="quickLink")
+
+    results: list[SGO] = []
+    for a in anchors:
+        name = a.get_text(strip=True)
+        if not name:
+            continue
+        website: str | None = a.get("href") or None
+        try:
+            results.append(SGO(
+                state=state, name=name, ein=None, raw_source=url,
+                address=None, phone=None, email=None, website=website,
+            ))
+        except ValueError:
+            pass
+
+    if not results:
+        raise ValueError(f"No SGO names extracted from LA HTML: {url}")
 
     return results

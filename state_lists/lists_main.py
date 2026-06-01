@@ -15,7 +15,7 @@ from fetcher import fetch_bytes, check_site, session
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
-from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl
+from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl, parse_html_la
 
 _STATE_PDF_PARSERS = {
     "az": parse_pdf_az,
@@ -26,6 +26,7 @@ _STATE_PDF_PARSERS = {
 # State-specific parsers for HTML page-list sources (keyed by 2-letter state code).
 _STATE_HTML_PARSERS = {
     "fl": parse_html_fl,
+    "la": parse_html_la,
 }
 
 
@@ -81,6 +82,7 @@ _NON_SGO_STARTS = (
     "scholarship organization name",            # column header "Scholarship Organization Name"
     "name address", "address city", "mailing address",
     "add me to your", "get on ",
+    "a list of the educational",              # MO xlsx title row
     "contact:",                                 # "Contact: Name, Title" lines
     "approved scholarship",                     # NH PDF section header fragment
     "program year",                             # "2025-2026 Program Year" header
@@ -102,6 +104,7 @@ _TRAILING_PHONE_RE = re.compile(
 _TRAILING_URL_RE    = re.compile(r"\s+(?:www\.|https?://)\S+.*$", re.IGNORECASE)
 _TRAILING_PO_RE     = re.compile(r"\s+P\.?O\.?\s+Box.*$", re.IGNORECASE)
 _TRAILING_BRACKET_RE = re.compile(r"\s*\[.+\]$")
+_TRAILING_SO_RE     = re.compile(r"\s+-\s+SO$", re.IGNORECASE)  # e.g. "Org Name - SO"
 
 _NON_SGO_PATTERNS = [
     re.compile(r, re.IGNORECASE) for r in [
@@ -123,6 +126,7 @@ _NON_SGO_PATTERNS = [
         r"\b\w+\.(org|com|net|edu)\s*$",
         # Single structural word (e.g. "ORGANIZATION", "Organization") — never an org name alone
         r"^(Organization|Scholarship|Foundation|Institute|Fund|Association|Corporation|Society)s?$",
+        r"^Scholarship Organizations?$",           # RI PDF column header
     ]
 ]
 
@@ -173,13 +177,19 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
             name = re.sub(r"(?<![\w'’])(\w)", lambda m: m.group().upper(),
                           name.lower())
         name = _TRAILING_BRACKET_RE.sub("", name).strip()
+        name = _TRAILING_SO_RE.sub("", name).strip()
         name = _TRAILING_PHONE_RE.sub("", name).strip()
         name = _TRAILING_URL_RE.sub("", name).strip()
         name = _TRAILING_PO_RE.sub("", name).strip()
         if not _is_sgo(name):
             removed += 1
             continue
-        key = (sgo.state, name.lower())
+        # Normalise the dedup key: strip a leading "the " so "The Org" and
+        # "Org" (without the article) aren't treated as different organisations.
+        name_key = name.lower()
+        if name_key.startswith("the "):
+            name_key = name_key[4:]
+        key = (sgo.state, name_key)
         if key in seen:
             continue
         seen.add(key)
@@ -193,7 +203,7 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
 
 # ── output ───────────────────────────────────────────────────────────────────
 
-_FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "source"]
+_FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "raw_source"]
 
 
 def write_results(sgos: list[SGO], path: str) -> None:
@@ -215,15 +225,14 @@ def _export_xlsx(sgos: list[SGO], path: str) -> None:
     ws = wb.active
     ws.append(_FIELDNAMES)
 
-    col_widths = [len(h) for h in _FIELDNAMES]
     for sgo in sgos:
-        row = [getattr(sgo, f) or "" for f in _FIELDNAMES]
-        ws.append(row)
-        for i, val in enumerate(row):
-            col_widths[i] = max(col_widths[i], len(str(val)))
+        ws.append([getattr(sgo, f) or "" for f in _FIELDNAMES])
 
-    for i, width in enumerate(col_widths, start=1):
-        ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width + 2
+    # Column widths in character units, matching _FIELDNAMES order:
+    # state, name, ein, address, phone, email, website, raw_source
+    _COL_WIDTHS = [6, 51, 10, 53, 13, 38, 33, 71]
+    for i, width in enumerate(_COL_WIDTHS, start=1):
+        ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
 
     wb.save(path)
     print(f"Wrote {len(sgos)} SGO records to {path}")
@@ -318,7 +327,6 @@ def run(output_path: str = "sgo_lists.csv") -> None:
     for name, url in urls.items():
         # ── navigation-only pages: never a data source ────────────────────────
         if "page source" in name.lower():
-            print(f"[SKIP] {name} — navigation page, no direct list")
             continue
 
         # ── blocked URLs: fall back to manual file if one exists ──────────────
