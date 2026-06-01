@@ -2,7 +2,7 @@
 
 Some state sites block automated requests (403 Forbidden). For states that
 publish a real SGO list behind that block, a person can download the page
-manually in a browser and place it here. The pipeline (`lists_main.py`) reads
+manually in a browser and place it here. The pipeline (`main.py`) reads
 these files automatically on the next run — no other changes needed.
 
 ---

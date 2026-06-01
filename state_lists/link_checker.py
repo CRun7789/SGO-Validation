@@ -11,7 +11,7 @@ Usage:
     py link_checker.py
 
 States not covered (AL, FL, GA, MT, OH, PA) have either stable permanent
-URLs or no separate source page; the existing check_urls() in lists_main.py
+URLs or no separate source page; the existing check_urls() in main.py
 handles liveness for those.
 """
 import re

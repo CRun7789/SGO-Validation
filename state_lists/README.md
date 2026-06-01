@@ -9,7 +9,7 @@ by each participating state, then writes a combined CSV and Excel file.
 
 **Run the full pipeline:**
 ```
-py lists_main.py
+py main.py
 ```
 Outputs `sgo_lists.csv` and `sgo_lists.xlsx` in this folder.
 
@@ -18,7 +18,7 @@ Outputs `sgo_lists.csv` and `sgo_lists.xlsx` in this folder.
 py link_checker.py
 ```
 Scrapes each state's source page to see if any annual file URLs have changed.
-Prompts before applying updates to `lists_main.py`.
+Prompts before applying updates to `main.py`.
 
 ---
 
@@ -26,8 +26,8 @@ Prompts before applying updates to `lists_main.py`.
 
 | File | Purpose |
 |------|---------|
-| `lists_main.py` | Main script. Holds the `urls` dict, fetches each source, dispatches to the right parser, post-processes results, and writes output. |
-| `link_checker.py` | Maintenance script. Detects stale download URLs by scraping state source pages and offers to update `lists_main.py` in place. |
+| `main.py` | Main script. Holds the `urls` dict, fetches each source, dispatches to the right parser, post-processes results, and writes output. |
+| `link_checker.py` | Maintenance script. Detects stale download URLs by scraping state source pages and offers to update `main.py` in place. |
 | `models.py` | Defines the `SGO` dataclass — the shared output schema for all parsers. |
 | `sgo_lists.csv` | Output: one row per organization, all states combined. |
 | `sgo_lists.xlsx` | Same data as the CSV, columns auto-fitted. |
@@ -53,14 +53,14 @@ Not every state provides every field.
 
 ## Adding a new state
 
-1. Add an entry to the `urls` dict in `lists_main.py`. The key name controls which
+1. Add an entry to the `urls` dict in `main.py`. The key name controls which
    parser is used: include `"pdf"`, `"xlsx"`, `"csv"`, `"word"`, or `"page`, followed by either `"source"` or `"list"` in
    the key, e.g. `"TX pdf list"`.
 2. If the state's source page links to an annual file, add it to `LINK_HINTS` in
    `link_checker.py` so future URL changes are caught automatically.
 3. If the file format doesn't parse cleanly with the generic parsers, add a
    state-specific function in `parsers/state_parsers.py` and register it in the
-   `_STATE_PDF_PARSERS` dict in `lists_main.py`.
+   `_STATE_PDF_PARSERS` dict in `main.py`.
 
 ---
 
