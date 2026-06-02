@@ -1,9 +1,10 @@
 # manual/ — Manually Downloaded Source Files
 
-Some state sites block automated requests (403 Forbidden). For states that
-publish a real SGO list behind that block, a person can download the page
-manually in a browser and place it here. The pipeline (`main.py`) reads
-these files automatically on the next run — no other changes needed.
+Some state sites block automated requests (403 Forbidden), or publish a page
+with too few entries to warrant a parser. For these states, a person can
+download the page manually in a browser and place it here. The pipeline
+(`main.py`) reads these files automatically on the next run — no other
+changes needed.
 
 ---
 
@@ -12,6 +13,7 @@ these files automatically on the next run — no other changes needed.
 | Filename | State | Source URL |
 |----------|-------|------------|
 | `FL_page_list.html` | FL | https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/ |
+| `SC_page_list.html` | SC | https://dor.sc.gov/tax-credits/ecenc-program-credits |
 | `VA_word_list.docx` | VA | https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000 |
 
 ---
@@ -26,6 +28,14 @@ these files automatically on the next run — no other changes needed.
    - Choose **"Webpage, HTML Only"** (not "Complete") — this saves just the
      HTML without extra asset folders.
    - Save as `FL_page_list.html` in this `manual/` folder.
+
+### SC — HTML page
+
+1. Open the SC source URL above in Chrome or Edge.
+2. If the page loads (check that the ECENC scholarship organization name is visible):
+   - Press **Ctrl+S** (Save As).
+   - Choose **"Webpage, HTML Only"** (not "Complete").
+   - Save as `SC_page_list.html` in this `manual/` folder.
 
 ### VA — Word document
 

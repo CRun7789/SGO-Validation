@@ -11,6 +11,8 @@ new domain, so the session picks up any such cookies before we hit the real
 target URL.  Already-visited origins are cached in _primed_domains so we only
 pay the extra round-trip once per domain per process run.
 """
+import threading
+
 import requests
 import urllib3
 from dataclasses import dataclass
@@ -23,6 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 session = requests.Session()  # reuse TCP connections and cookies across all requests
 
 _primed_domains: set[str] = set()
+_prime_lock = threading.Lock()  # guards _primed_domains for concurrent fetch_bytes calls
 
 
 def _prime_session(url: str) -> None:
@@ -31,12 +34,17 @@ def _prime_session(url: str) -> None:
 
     The visit is best-effort: any error is silently swallowed so a blocked or
     slow homepage never prevents us from attempting the real target URL.
+
+    Thread-safe: the domain is added to _primed_domains inside the lock before
+    the actual request so only one thread ever primes a given origin.
     """
     parsed = urlparse(url)
     origin = f"{parsed.scheme}://{parsed.netloc}"
-    if origin in _primed_domains:
-        return
-    _primed_domains.add(origin)
+    with _prime_lock:
+        if origin in _primed_domains:
+            return
+        _primed_domains.add(origin)
+    # Lock is released before the network call — only this thread primes the origin
     try:
         session.get(origin, headers=HEADERS, timeout=10, allow_redirects=True, verify=False)
     except Exception:

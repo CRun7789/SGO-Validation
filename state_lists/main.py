@@ -1,8 +1,9 @@
 import csv
 import re
 import sys
-import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+import time
 
 sys.stdout.reconfigure(encoding="utf-8")
 from dataclasses import asdict
@@ -15,7 +16,7 @@ from fetcher import fetch_bytes, check_site, session
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
-from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl, parse_html_la
+from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl, parse_html_la, parse_html_sc
 
 _STATE_PDF_PARSERS = {
     "az": parse_pdf_az,
@@ -27,6 +28,7 @@ _STATE_PDF_PARSERS = {
 _STATE_HTML_PARSERS = {
     "fl": parse_html_fl,
     "la": parse_html_la,
+    "sc": parse_html_sc,
 }
 
 
@@ -105,6 +107,10 @@ _TRAILING_URL_RE    = re.compile(r"\s+(?:www\.|https?://)\S+.*$", re.IGNORECASE)
 _TRAILING_PO_RE     = re.compile(r"\s+P\.?O\.?\s+Box.*$", re.IGNORECASE)
 _TRAILING_BRACKET_RE = re.compile(r"\s*\[.+\]$")
 _TRAILING_SO_RE     = re.compile(r"\s+-\s+SO$", re.IGNORECASE)  # e.g. "Org Name - SO"
+# Commas in org names (e.g. "Acme Scholarships, Inc.", "Acme Fund, LLC") cause
+# csv.writer to wrap the field in quotes, making the CSV look inconsistent.
+# Replace ", Suffix" with " Suffix" and strip any remaining bare trailing comma.
+_COMMA_SUFFIX_RE    = re.compile(r",\s+(?=[A-Z])", re.IGNORECASE)  # ", Inc" → " Inc"
 
 _NON_SGO_PATTERNS = [
     re.compile(r, re.IGNORECASE) for r in [
@@ -181,6 +187,7 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
         name = _TRAILING_PHONE_RE.sub("", name).strip()
         name = _TRAILING_URL_RE.sub("", name).strip()
         name = _TRAILING_PO_RE.sub("", name).strip()
+        name = _COMMA_SUFFIX_RE.sub(" ", name).rstrip(",").strip()
         if not _is_sgo(name):
             removed += 1
             continue
@@ -311,6 +318,9 @@ def check_urls() -> None:
         time.sleep(1)
 
 
+_MAX_FETCH_WORKERS = 8  # concurrent HTTP threads; all sources are different domains
+
+
 def run(output_path: str = "sgo_lists.csv") -> None:
     """
     Fetch and parse every accessible data source; write results to output_path.
@@ -321,15 +331,19 @@ def run(output_path: str = "sgo_lists.csv") -> None:
 
     For blocked_urls entries that DO have a manual file in manual_sources,
     reads the local file instead of attempting a network request.
+
+    Network fetches run concurrently (up to _MAX_FETCH_WORKERS threads) so the
+    total wall-clock time is dominated by the slowest single source rather than
+    the sum of all round-trips.  Parsing runs sequentially after all fetches
+    complete so parse output is ordered and readable.
     """
-    all_sgos: list[SGO] = []
+    # ── 1. Build work list ────────────────────────────────────────────────────
+    # Each item: (name, url, manual_path_or_None)
+    work: list[tuple[str, str, Path | None]] = []
 
     for name, url in urls.items():
-        # ── navigation-only pages: never a data source ────────────────────────
         if "page source" in name.lower():
             continue
-
-        # ── blocked URLs: fall back to manual file if one exists ──────────────
         if name in blocked_urls:
             if name not in manual_sources:
                 print(f"[SKIP] {name} — blocked ({blocked_urls[name]})")
@@ -339,22 +353,47 @@ def run(output_path: str = "sgo_lists.csv") -> None:
                 print(f"[SKIP] {name} — blocked; manual file not found ({manual_path})")
                 print( "         See manual/README.md for download instructions.")
                 continue
-            print(f"\n[MANUAL] {name} — reading {manual_path.name}")
-            content = manual_path.read_bytes()
-
-        # ── normal network fetch ──────────────────────────────────────────────
+            work.append((name, url, manual_path))
         else:
-            state = name[:2].upper()
-            print(f"\n[{state}] Fetching {name} ...")
-            try:
-                content = fetch_bytes(url)
-            except Exception as e:
-                print(f"  FAILED: {e}")
-                continue
+            work.append((name, url, None))
 
-        # ── parse (same dispatcher regardless of source) ──────────────────────
+    # ── 2. Fetch all sources concurrently ─────────────────────────────────────
+    def _fetch(item: tuple[str, str, Path | None]) -> tuple[str, str, bytes | None, str | None]:
+        name, url, manual_path = item
+        if manual_path is not None:
+            return name, url, manual_path.read_bytes(), None
+        try:
+            return name, url, fetch_bytes(url), None
+        except Exception as e:
+            return name, url, None, str(e)
+
+    n_network = sum(1 for _, _, mp in work if mp is None)
+    n_manual  = len(work) - n_network
+    print(f"\nFetching {n_network} remote source(s) in parallel"
+          f"{f' + {n_manual} manual file(s)' if n_manual else ''} ...")
+
+    fetched: list[tuple[str, str, bytes | None, str | None]] = []
+    with ThreadPoolExecutor(max_workers=_MAX_FETCH_WORKERS) as pool:
+        future_to_item = {pool.submit(_fetch, item): item for item in work}
+        for future in as_completed(future_to_item):
+            name, url, content, err = future.result()
+            label = "[MANUAL]" if future_to_item[future][2] is not None else f"[{name[:2].upper()}]"
+            if err:
+                print(f"  {label} {name} — FAILED: {err}")
+            else:
+                print(f"  {label} {name} — {len(content):,} bytes")
+            fetched.append((name, url, content, err))
+
+    # ── 3. Parse sequentially (fast; keeps output readable and ordered) ────────
+    fetched.sort(key=lambda r: r[0])  # deterministic order regardless of arrival
+
+    all_sgos: list[SGO] = []
+    for name, url, content, err in fetched:
+        if err or content is None:
+            continue
         state = name[:2].upper()
         parser = get_parser(name)
+        print(f"\n[{state}] Parsing {name} ...")
         try:
             sgos = parser(content, state, url)
             print(f"  → {len(sgos)} SGOs extracted")
@@ -362,11 +401,24 @@ def run(output_path: str = "sgo_lists.csv") -> None:
         except Exception as e:
             print(f"  FAILED: {e}")
 
-        time.sleep(1)
-
     all_sgos = postprocess(all_sgos)
     write_results(all_sgos, output_path)
 
+    xlsx_path = (_HERE / Path(output_path).name).with_suffix(".xlsx")
+    try:
+        answer = input("\nOpen sgo_lists.xlsx in Excel? [y/N]: ").strip().lower()
+    except EOFError:
+        answer = ""
+    if answer == "y":
+        import subprocess
+        subprocess.Popen(
+            ["explorer.exe", str(xlsx_path)],
+            creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+        )
+        print("   Starting up Excel... This may take a moment.")
+        time.sleep(4)
+
+    print("\nPipeline complete!")
 
 if __name__ == "__main__":
     run()
