@@ -1,5 +1,5 @@
 """
-State-specific parsers for AZ, KS, NV (PDF) and FL, LA (HTML).
+State-specific parsers for AZ, KS, NV (PDF) and FL, LA, SC (HTML).
 
 PDF states (AZ, KS, NV) pack multiple fields into single text runs that the
 generic parser cannot split into columns.  Each uses regex to extract fields
@@ -14,12 +14,18 @@ LA lists orgs as <a class="quickLink"> elements inside a
 <div class="QuickLinkList__LinkList"> widget — no table, no <li> items.
 Each anchor text is the org name; the href is the org website.
 
+SC has a single SGO (Exceptional SC).  The ECENC program page does not list
+it in a table or dedicated element; the org name and website appear in body
+prose.  The parser locates the anchor whose href contains "exceptionalsc.org"
+and extracts the name and URL from it.
+
 Fields extracted by state:
   AZ — name, address, phone, website  (no EIN, no email)
   FL — name, address, phone, email, website
   KS — name, address, phone, email    (no EIN, no website)
   LA — name, website                  (no EIN, address, phone, or email)
   NV — name, address, phone, email    (no EIN; website unreliable — omitted)
+  SC — name, website                  (no EIN, address, phone, or email)
 """
 import io
 import re
@@ -498,3 +504,43 @@ def parse_html_la(html: str, state: str, url: str) -> list[SGO]:
         raise ValueError(f"No SGO names extracted from LA HTML: {url}")
 
     return results
+
+
+# ── SC ───────────────────────────────────────────────────────────────────────
+#
+# The SC ECENC program page does not have a dedicated org list.  Exceptional SC
+# is mentioned in body prose, and its website (exceptionalsc.org) appears as an
+# <a> anchor.  We locate that anchor to get the org name and URL rather than
+# hardcoding them, so the parser will still work if the page wording changes.
+
+def parse_html_sc(html: str, state: str, url: str) -> list[SGO]:
+    """
+    Extract the single SGO from the SC ECENC program page (manually downloaded).
+
+    Finds the <a> anchor whose href points to exceptionalsc.org and uses its
+    link text as the org name.  Falls back to a hardcoded name if the anchor
+    is not found (e.g. the page was restructured).
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    anchor = soup.find("a", href=lambda h: h and "exceptionalsc.org" in h)
+    if anchor:
+        name = anchor.get_text(strip=True) or "Exceptional SC"
+        website: str | None = anchor["href"]
+    else:
+        # Page restructured — fall back to the known name with no website URL
+        name = "Exceptional SC"
+        website = None
+
+    return [
+        SGO(
+            state=state,
+            name=name,
+            ein=None,
+            raw_source=url,
+            address=None,
+            phone=None,
+            email=None,
+            website=website,
+        )
+    ]

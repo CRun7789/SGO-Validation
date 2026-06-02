@@ -80,5 +80,6 @@ Not every state provides every field.
 | OH | HTML table | name, ein, address | ← only state with EIN |
 | PA | CSV download | name, address, phone, email, website |
 | RI | PDF | name only |
+| SC | HTML *(manual download)* | name only |
 | SD | PDF | name only |
 | VA | Word (.docx) *(blocked as of 5/2026)* | N/A |

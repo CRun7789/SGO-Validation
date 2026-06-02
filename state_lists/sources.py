@@ -70,8 +70,8 @@ urls: dict[str, str] = {
     "PA download Excel list":  "https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv",
     "RI page source":          "https://tax.ri.gov/tax-sections/credits/scholarship-credit",
     "RI pdf list":             "https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf",
-    # SC: ECENC program is administered by a single org; no multi-org list page
-    # "SC page list": "https://dor.sc.gov/tax-credits/ecenc-program-credits",
+    # SC: single-org page — treated as manually downloaded (see manual/SC_page_list.html)
+    "SC page list":            "https://dor.sc.gov/tax-credits/ecenc-program-credits",
     "SD page source":          "https://dlr.sd.gov/insurance/tax_credit_program.aspx",
     "SD pdf list":             "https://dlr.sd.gov/insurance/tax_credit_program/documents/sgo_participation_list.pdf",
     "VA page source":          "https://www.doe.virginia.gov/data-policy-funding/school-finance/education-improvement-scholarships-tax-credits-program",
@@ -83,7 +83,7 @@ urls: dict[str, str] = {
 blocked_urls: dict[str, str] = {
     "FL page list":           "403 Forbidden",
     "NH page source":         "403 Forbidden",
-    # NH pdf list unblocked as of 5/2026 after full browser-header set was added
+    "SC page list":           "single org — download manually",
     "VA page source":         "403 Forbidden",
     "VA download Word list":  "403 Forbidden",
 }
