@@ -247,4 +247,11 @@ def check_all_links(urls_dict: dict[str, str]) -> None:
 
 
 if __name__ == "__main__":
+    print(
+        "[NOTE] The IRS 990-N e-Postcard data used by the 990n processor is a "
+        "static file that must be manually updated periodically.  Download the "
+        "latest version from https://www.irs.gov/charities-non-profits/tax-exempt-"
+        "organization-search-bulk-data-downloads and replace the existing file in "
+        "the project before re-running the combination pipeline.\n"
+    )
     check_all_links(CURRENT_URLS)

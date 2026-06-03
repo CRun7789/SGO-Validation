@@ -97,5 +97,6 @@ blocked_urls: dict[str, str] = {
 # See manual/README.md for download instructions.
 manual_sources: dict[str, str] = {
     "FL page list":          "manual/FL_page_list.html",
+    "SC page list":          "manual/SC_page_list.html",
     "VA download Word list": "manual/VA_word_list.docx",
 }

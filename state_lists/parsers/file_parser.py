@@ -7,24 +7,7 @@ csv and io are stdlib — no install needed.
 import csv
 import io
 from models import SGO
-
-try:
-    import openpyxl
-except ImportError as e:
-    raise ImportError("openpyxl is required: pip install openpyxl") from e
-
-try:
-    import docx
-except ImportError as e:
-    raise ImportError("python-docx is required: pip install python-docx") from e
-
-MAX_BYTES = 50_000_000
-HEADER_WORDS = {"name", "organization", "sgo", "scholarship", "no.", "#", "entity", "document"}
-
-
-def _is_header(text: str) -> bool:
-    words = text.lower().split()
-    return bool(words) and words[0] in HEADER_WORDS
+from parsers._shared import MAX_BYTES, is_header as _is_header
 
 
 def parse_xlsx(xlsx_bytes: bytes, state: str, url: str) -> list[SGO]:
@@ -35,6 +18,11 @@ def parse_xlsx(xlsx_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
     if len(xlsx_bytes) > MAX_BYTES:
         raise ValueError(f"xlsx from {url} exceeds size limit")
+
+    try:
+        import openpyxl
+    except ImportError as e:
+        raise ImportError("openpyxl is required: pip install openpyxl") from e
 
     wb = openpyxl.load_workbook(io.BytesIO(xlsx_bytes), read_only=True, data_only=True)
     ws = wb.active
@@ -71,13 +59,7 @@ _CSV_COL_ALIASES: dict[str, list[str]] = {
 }
 
 
-def _col_index(headers: list[str], aliases: list[str]) -> int | None:
-    """Return the index of the first header that matches any alias (case-insensitive)."""
-    hl = [h.strip().lower() for h in headers]
-    for alias in aliases:
-        if alias in hl:
-            return hl.index(alias)
-    return None
+from parsers._shared import col_index as _col_index
 
 
 def parse_csv(csv_bytes: bytes, state: str, url: str) -> list[SGO]:
@@ -159,6 +141,11 @@ def parse_docx(docx_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
     if len(docx_bytes) > MAX_BYTES:
         raise ValueError(f"docx from {url} exceeds size limit")
+
+    try:
+        import docx
+    except ImportError as e:
+        raise ImportError("python-docx is required: pip install python-docx") from e
 
     doc = docx.Document(io.BytesIO(docx_bytes))
     results = []

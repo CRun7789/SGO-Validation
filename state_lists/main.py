@@ -19,17 +19,24 @@ _ROOT = _HERE.parent           # repo root — needed to import from src/
 # where the script is launched from.
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
-from src.processing.sgo_scorer import CERTIFIED_BY_STATE
 from utils import normalize_name
 
-# Pre-normalize every certified name once at startup:
-#   { "al": {"scholarships for kids", "alabama opportunity scholarship fund", …}, … }
-_CERTIFIED_NORMALIZED: dict[str, set[str]] = {
-    state: {normalize_name(n) for n in names}
-    for state, names in CERTIFIED_BY_STATE.items()
-}
+# Certified-SGO lookup — built lazily on first call to filter_certified().
+# Deferring the sgo_scorer import avoids pulling pandas into the startup path
+# (~2 s on a cold interpreter).
+_CERTIFIED_NORMALIZED: dict[str, set[str]] | None = None
 
-from fetcher import fetch_bytes, check_site, session
+def _get_certified_normalized() -> dict[str, set[str]]:
+    global _CERTIFIED_NORMALIZED
+    if _CERTIFIED_NORMALIZED is None:
+        from src.processing.sgo_scorer import CERTIFIED_BY_STATE
+        _CERTIFIED_NORMALIZED = {
+            state: {normalize_name(n) for n in names}
+            for state, names in CERTIFIED_BY_STATE.items()
+        }
+    return _CERTIFIED_NORMALIZED
+
+
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
@@ -138,6 +145,34 @@ _TRAILING_SO_RE     = re.compile(r"\s+-\s+SO$", re.IGNORECASE)  # e.g. "Org Name
 # Replace ", Suffix" with " Suffix" and strip any remaining bare trailing comma.
 _COMMA_SUFFIX_RE    = re.compile(r",\s+(?=[A-Z])", re.IGNORECASE)  # ", Inc" → " Inc"
 
+# ── contact-field normalisation ───────────────────────────────────────────────
+_PHONE_DIGITS_RE = re.compile(r"\D")  # strip everything that isn't a digit
+
+
+def _normalize_phone(raw: str | None) -> str | None:
+    """
+    Reformat a phone number string to (NXX) NXX-XXXX.
+
+    Strips all non-digit characters and uses the last 10 digits (ignoring
+    country-code prefixes such as "1-").  Returns None if the result does not
+    have exactly 10 digits.
+    """
+    if not raw:
+        return None
+    digits = _PHONE_DIGITS_RE.sub("", raw)
+    if len(digits) > 10:
+        digits = digits[-10:]   # drop leading country code
+    if len(digits) != 10:
+        return raw              # unrecognised format — leave untouched
+    return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
+
+
+def _normalize_email(raw: str | None) -> str | None:
+    """Return email address in all-lowercase, or None if blank."""
+    if not raw:
+        return None
+    return raw.strip().lower()
+
 _NON_SGO_PATTERNS = [
     re.compile(r, re.IGNORECASE) for r in [
         r"^\(?\d{4}[-–]\d{4}\)?\s*(\w.*)?$",                 # year range: 2025-2026 or "2025-2026 Program Year"
@@ -203,18 +238,20 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
             removed += 1
             continue
         if name.isupper() and " " in name:
-            # Skip title-casing if any word is ≤3 characters — those are likely
-            # intentional abbreviations or acronyms (e.g. "BBH", "SGO", "1") whose
-            # original capitalisation should be preserved.
-            words = name.split()
-            if any(len(w) <= 3 for w in words):
-                pass  # leave casing as-is
-            else:
-                # str.title() capitalises after apostrophes ("Children’S") — use re instead.
-                # Exclude straight apostrophe (U+0027) and curly right-quote (U+2019) from the
-                # lookbehind so "children’s" and "children’s" both stay lowercase after the quote.
-                name = re.sub(r"(?<![\w’’])(\w)", lambda m: m.group().upper(),
-                              name.lower())
+            # Title-case word by word.  Words of ≤3 characters keep their
+            # original casing (preserving abbreviations and acronyms such as
+            # "LLC", "SGO", "of", "1"), EXCEPT common articles/conjunctions
+            # ("the", "and") which are always title-cased.  Longer words get
+            # first-letter-upper + rest-lower, which correctly handles
+            # apostrophes ("CHILDREN’S" → "Children’s") without the
+            # str.title() bug ("Children’S").
+            _ALWAYS_TITLE = {"the", "and"}
+            name = " ".join(
+                word[0].upper() + word[1:].lower()
+                if len(word) > 3 or word.lower() in _ALWAYS_TITLE
+                else word
+                for word in name.split(" ")
+            )
         name = _TRAILING_BRACKET_RE.sub("", name).strip()
         name = _TRAILING_SO_RE.sub("", name).strip()
         name = _TRAILING_PHONE_RE.sub("", name).strip()
@@ -233,7 +270,9 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
         if key in seen:
             continue
         seen.add(key)
-        sgo.name = name
+        sgo.name  = name
+        sgo.phone = _normalize_phone(sgo.phone)
+        sgo.email = _normalize_email(sgo.email)
         cleaned.append(sgo)
 
     print(f"\nPost-processing: removed {removed} non-SGO entries, "
@@ -241,33 +280,29 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
     return cleaned
 
 
-def filter_certified(sgos: list[SGO]) -> list[SGO]:
+def mark_certified(sgos: list[SGO]) -> list[SGO]:
     """
-    Remove orgs already present in CERTIFIED_BY_STATE.
+    Set sgo.known = "Yes" for every org already present in CERTIFIED_BY_STATE.
 
-    These are covered by the hand-maintained certified list in sgo_scorer.py
-    and will be handled by the IRS scoring pipeline in the combination step.
-    Dropping them here avoids duplication in the final combined output.
+    All records are kept; the 'Known?' column in the output lets the reviewer
+    see at a glance which orgs are already validated SGOs.
 
     Matching uses normalize_name() so differences in articles, corporate
     suffixes, punctuation, and capitalisation are ignored.
     """
-    kept: list[SGO] = []
-    removed = 0
+    marked = 0
     for sgo in sgos:
-        certified = _CERTIFIED_NORMALIZED.get(sgo.state.lower(), set())
+        certified = _get_certified_normalized().get(sgo.state.lower(), set())
         if normalize_name(sgo.name) in certified:
-            removed += 1
-        else:
-            kept.append(sgo)
-    print(f"Certified filter: removed {removed} already-certified orgs "
-          f"→ {len(kept)} novel records remain")
-    return kept
+            sgo.known = "Yes"
+            marked += 1
+    print(f"Certified check: marked {marked} already-certified orgs as Known")
+    return sgos
 
 
 # ── output ───────────────────────────────────────────────────────────────────
 
-_FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "raw_source"]
+_FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "raw_source", "known"]
 
 
 def write_results(sgos: list[SGO], path: str) -> None:
@@ -301,8 +336,8 @@ def _export_xlsx(sgos: list[SGO], path: str) -> None:
             break
 
     # Column widths in character units, matching _FIELDNAMES order:
-    # state, name, ein, address, phone, email, website, raw_source
-    _COL_WIDTHS = [6, 51, 10, 53, 13, 38, 33, 71]
+    # state, name, ein, address, phone, email, website, raw_source, known
+    _COL_WIDTHS = [6, 58, 10, 53, 13, 38, 33, 71, 8]
     for i, width in enumerate(_COL_WIDTHS, start=1):
         ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
 
@@ -333,6 +368,7 @@ def check_urls() -> None:
       - Blocked URLs that have a manual file covering them (expected, informational)
       - Blocked URLs with no fallback at all (need attention)
     """
+    from fetcher import check_site  # deferred — requests is slow to import
     print(f"\nChecking {len(urls)} URLs ...\n")
     for name, url in urls.items():
         print(f"-----------\nChecking {name}")
@@ -417,6 +453,26 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
     the sum of all round-trips.  Parsing runs sequentially after all fetches
     complete so parse output is ordered and readable.
     """
+    import subprocess
+    from fetcher import fetch_bytes  # deferred — requests is slow to import
+
+    _start = time.perf_counter()
+    _last_checkpoint = [_start]  # list so the nested closure can mutate it
+
+    def _fmt(secs: float) -> str:
+        if secs < 60:
+            return f"{secs:.1f}s"
+        m, s = divmod(int(secs), 60)
+        return f"{m}m {s}s"
+
+    def _checkpoint(label: str, since: float = None) -> None:
+        """Print section time (since last checkpoint or explicit `since`) and running total."""
+        now = time.perf_counter()
+        section = now - (since if since is not None else _last_checkpoint[0])
+        total   = now - _start
+        print(f"  ⏱  {label}: {_fmt(section)} elapsed  (total {_fmt(total)})")
+        _last_checkpoint[0] = now
+
     # ── 1. Build work list ────────────────────────────────────────────────────
     # Each item: (name, url, manual_path_or_None)
     work: list[tuple[str, str, Path | None]] = []
@@ -463,6 +519,7 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
             else:
                 print(f"  {label} {name} — {len(content):,} bytes")
             fetched.append((name, url, content, err))
+    _checkpoint("Fetch")
 
     # ── 3. Parse sequentially (fast; keeps output readable and ordered) ────────
     fetched.sort(key=lambda r: r[0])  # deterministic order regardless of arrival
@@ -480,16 +537,19 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
             all_sgos.extend(sgos)
         except Exception as e:
             print(f"  FAILED: {e}")
+    _checkpoint("Parse")
 
     all_sgos = postprocess(all_sgos)
-    all_sgos = filter_certified(all_sgos)
+    all_sgos = mark_certified(all_sgos)
+    _checkpoint("Post-process + certified filter")
+
     _CSV_DIR.mkdir(parents=True, exist_ok=True)
     write_results(all_sgos, output_path)
+    _checkpoint("Write state_sgo_lists")
 
     print("\nState lists pipeline complete.")
 
     if not full_pipeline:
-        import subprocess
         xlsx_path = _XLSX_DIR / Path(output_path).with_suffix(".xlsx").name
         try:
             answer = input("\nOpen state_sgo_lists.xlsx in Excel? [y/N]: ").strip().lower()
@@ -500,11 +560,11 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
                 ["explorer.exe", str(xlsx_path)],
                 creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
             )
+            print("Opening file...")
             time.sleep(2)
         return
 
     # ── Combination pipeline ──────────────────────────────────────────────────
-    import subprocess
     print("\n" + "=" * 60)
     print("Starting combination pipeline (IRS EO BMF)...")
     print("=" * 60)
@@ -514,11 +574,12 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
     )
     if result.returncode != 0:
         print(f"\nCombination pipeline exited with code {result.returncode}.")
+    _checkpoint("Combination pipeline (IRS EO BMF)")
 
     # ── Enrich state_sgo_lists with IRS data ──────────────────────────────────
     _ENRICHED_FIELDNAMES = [
         "state", "name", "ein", "phone", "email", "website",
-        "Contact Name", "address", "Ruling Date", "raw_source",
+        "Contact Name", "address", "Ruling Date", "raw_source", "known",
     ]
     state_sgo_path = _CSV_DIR  / "state_sgo_lists.csv"
     combined_path  = _CSV_DIR  / "combined_irs_data.csv"
@@ -527,52 +588,81 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
     if not combined_path.exists():
         print(f"\n[WARN] {combined_path.name} not found — skipping enrichment.")
     else:
-        # Build index: (STATE_upper, normalized_name) → best IRS row
+        # Build two indexes from combined_irs_data:
+        #   irs_name_index — (STATE_upper, normalized_name) → best IRS row
+        #   irs_ein_index  — EIN (digits only, no dashes) → best IRS row
         # When duplicates exist, keep the row with the highest combined_score.
-        irs_index: dict[tuple[str, str], dict] = {}
+        def _best_row(existing: dict, candidate: dict) -> dict:
+            try:
+                return candidate if (
+                    float(candidate.get("combined_score") or 0)
+                    > float(existing.get("combined_score") or 0)
+                ) else existing
+            except (ValueError, TypeError):
+                return existing
+
+        irs_name_index: dict[tuple[str, str], dict] = {}
+        irs_ein_index:  dict[str, dict] = {}
         with open(combined_path, encoding="utf-8") as f:
             for irs_row in csv.DictReader(f):
                 state = irs_row.get("STATE", "").strip().upper()
-                key   = (state, normalize_name(irs_row.get("NAME", "")))
-                if key not in irs_index:
-                    irs_index[key] = irs_row
-                else:
-                    try:
-                        if (float(irs_row.get("combined_score") or 0)
-                                > float(irs_index[key].get("combined_score") or 0)):
-                            irs_index[key] = irs_row
-                    except (ValueError, TypeError):
-                        pass
+                name_key = (state, normalize_name(irs_row.get("NAME", "")))
+                irs_name_index[name_key] = _best_row(
+                    irs_name_index[name_key], irs_row
+                ) if name_key in irs_name_index else irs_row
+
+                ein_raw = re.sub(r"\D", "", irs_row.get("EIN", ""))
+                if ein_raw:
+                    irs_ein_index[ein_raw] = _best_row(
+                        irs_ein_index[ein_raw], irs_row
+                    ) if ein_raw in irs_ein_index else irs_row
 
         def _irs_address(irs_row: dict) -> str:
             parts = [irs_row.get(c, "").strip()
                      for c in ("STREET", "CITY", "STATE", "ZIP")]
             return ", ".join(p for p in parts if p)
 
+        # ── Pass 1: IRS enrichment (fast — in-memory lookups) ────────────────
         total = matched = 0
-        with open(state_sgo_path, encoding="utf-8") as fin, \
-             open(enriched_path, "w", newline="", encoding="utf-8") as fout:
-            reader = csv.DictReader(fin)
-            writer = csv.DictWriter(fout, fieldnames=_ENRICHED_FIELDNAMES)
-            writer.writeheader()
-            for row in reader:
+        enriched_rows: list[dict] = []
+        with open(state_sgo_path, encoding="utf-8") as fin:
+            for row in csv.DictReader(fin):
                 total += 1
                 enriched = {**row, "Contact Name": "", "Ruling Date": ""}
-                key = (row.get("state", "").strip().upper(),
-                       normalize_name(row.get("name", "")))
-                irs = irs_index.get(key)
+                # Primary lookup: (state, normalized name)
+                name_key = (row.get("state", "").strip().upper(),
+                            normalize_name(row.get("name", "")))
+                irs = irs_name_index.get(name_key)
+                # Secondary lookup: EIN (if the state list already has one)
+                if irs is None:
+                    ein_raw = re.sub(r"\D", "", row.get("ein", "") or "")
+                    if ein_raw:
+                        irs = irs_ein_index.get(ein_raw)
                 if irs:
                     matched += 1
                     if not enriched.get("ein"):
-                        enriched["ein"]     = irs.get("EIN", "").strip()
+                        enriched["ein"]          = irs.get("EIN", "").strip()
                     if not enriched.get("address"):
-                        enriched["address"] = _irs_address(irs)
-                    enriched["Contact Name"] = irs.get("ICO", "").strip()
-                    enriched["Ruling Date"]  = irs.get("RULING", "").strip()
-                writer.writerow(enriched)
+                        enriched["address"]      = _irs_address(irs)
+                    if not enriched.get("phone"):
+                        enriched["phone"]        = irs.get("phone", "").strip()
+                    if not enriched.get("email"):
+                        enriched["email"]        = irs.get("email", "").strip()
+                    if not enriched.get("website"):
+                        enriched["website"]      = irs.get("website", "").strip()
+                    enriched["Contact Name"]     = irs.get("ICO", "").strip()
+                    enriched["Ruling Date"]      = irs.get("RULING", "").strip()
+                enriched_rows.append(enriched)
 
-        print(f"\nEnrichment: matched {matched}/{total} rows from IRS data "
-              f"→ {enriched_path.name}")
+        print(f"\nEnrichment: matched {matched}/{total} rows from IRS data.")
+        _checkpoint("IRS enrichment")
+
+        # ── Write enriched CSV ────────────────────────────────────────────────
+        with open(enriched_path, "w", newline="", encoding="utf-8") as fout:
+            writer = csv.DictWriter(fout, fieldnames=_ENRICHED_FIELDNAMES)
+            writer.writeheader()
+            writer.writerows(enriched_rows)
+        print(f"Wrote enriched data → {enriched_path.name}")
 
         # ── Export enriched_data.xlsx ─────────────────────────────────────────
         import openpyxl
@@ -589,6 +679,7 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
             "address":      "Address",
             "Ruling Date":  "Ruling Date",
             "raw_source":   "Raw Source",
+            "known":        "Known?",
         }
         wb = openpyxl.Workbook()
         ws = wb.active
@@ -603,14 +694,15 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
             else:
                 break
         # Column widths matching _ENRICHED_FIELDNAMES order:
-        # State, Name, EIN, Phone, Email, Website, Contact Name, Address, Ruling Date, Raw Source
-        _ENRICHED_COL_WIDTHS = [5, 42, 11, 13, 30, 30, 18, 52, 10, 65]
+        # State, Name, EIN, Phone, Email, Website, Contact Name, Address, Ruling Date, Raw Source, Known?
+        _ENRICHED_COL_WIDTHS = [7, 44, 13, 15, 32, 32, 20, 54, 12, 67, 8]
         for i, width in enumerate(_ENRICHED_COL_WIDTHS, start=1):
             ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
         while True:
             try:
                 wb.save(enriched_xlsx)
                 print(f"Wrote enriched_data.xlsx to {enriched_xlsx}")
+                _checkpoint("Export enriched_data.xlsx")
                 break
             except PermissionError:
                 print(f"\n[ERROR] Cannot write enriched_data.xlsx — the file is open in another program.")
@@ -630,19 +722,8 @@ def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
                 ["explorer.exe", str(enriched_xlsx)],
                 creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
             )
+            print("Opening file...")
             time.sleep(2)
 
 if __name__ == "__main__":
-    print("Which pipeline do you want to run?")
-    print("  1  State lists only  (fetch, parse, deduplicate, write state_sgo_lists)")
-    print("  2  Full combination  (state lists + IRS EO BMF enrichment)")
-    try:
-        choice = input("Enter 1 or 2: ").strip()
-    except EOFError:
-        choice = "1"
-
-    if choice not in ("1", "2"):
-        print(f"Invalid choice {choice!r} — defaulting to state lists only.")
-        choice = "1"
-
-    run(full_pipeline=choice == "2")
+    run(full_pipeline=True)

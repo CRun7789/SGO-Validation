@@ -1,105 +1,349 @@
-state,name,ein,phone,email,website,Contact Name,address,Ruling Date,raw_source
-AL,Children’s Tuition Fund of Alabama,,(719) 867-5280,elliott@acsi.org,,,PO Box 62249,,https://www.revenue.alabama.gov/legal/annual-public-report-information/
-FL,Sunshine State Kids,,954-353-6660,admin@sunshinestatekidsfl.org,https://sunshinestatekidsfl.org/,,"5870 Stirling Rd, Hollywood, FL 33021",,https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/
-GA,A A A Scholarship Foundation Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-GA,Christian Int Counseling and Ministries,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-GA,Georgia GOAL Scholarship Program Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-GA,Georgia Student Scholarship Organization Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-GA,Georgia Tax Credit Scholarship Program Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-GA,A Pay It Forward Scholarship Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports
-KS,ACE Scholarships SGO Kansas LLC,,303-407-0611,lrhodes@acescholarships.org,,,"5251 DTC Parkway, Suite 1150 Greenwood Village CO 80111",,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf
-KS,Center for Behavioral and Academic Research,,316-239-6472,alycia@mcadamsacademy.com,,,903 S. Glenn Avenue Wichita KS 67213,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf
-KS,Golden Belt Community Foundation,,620-792-3000,jason@goldenbeltcf.org,,,1307 Williams St. Great Bend KS 67530,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf
-KS,Word of Life Ministries and Schools Inc.,,316-644-3070,Prob@WOLM.org,,,915 E. 53rd St. Wichita KS 67219,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf
-LA,ACE Scholarships Louisiana,,,,https://www.acescholarships.org/become-a-scholar/louisiana/,,,,https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program
-MO,Agudath Israel of Illinois dba Agudath Israel of Missouri,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx
-MO,Children's Tuition Fund of MO,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx
-MO,Missouri District of the Lutheran Church - Missouri Synod,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx
-MO,Today and Tomorrow Educational Foundation,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx
-MT,ACE Scholarships SSO Montana LLC,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO
-NH,THE CHILDREN’S SCHOLARSHIP FUND,,,,,,,,https://www.revenue.nh.gov/sites/g/files/ehbemt736/files/documents/scholarship-organizations-approved-2025-2026.pdf
-NV,AAA Scholarship Foundation-NV LLC,,(888)707-2465,kim@aaascholarships.org,,,"1452 W. Horizon Ridge Road, #541, Henderson NV 89012",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf
-NV,Silver State Scholarships,,(702)736-7787,scholarships@silverstatescholarships.org,,,"6655 W. Sahara Ave. #D106 Las Vegas, NV 89146",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf
-OH,1 BBH BEES SGO,41-3833782,,,,% JAMI AQUINO,"9305 OXFORD TRAIL, BRECKSVILLE, Ohio 44141",202603,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,American Scholarship Network,42-1945763,,,,,"4456 N Abbe Rd #305, Sheffield Village, Ohio 44054",202604,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Aurora City Schools Scholarship Granting Organization,41-2906278,,,,,"PO Box 109, Aurora, Ohio 44202",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Buckeye Christian School Organization,34-1417866,,,,,"2400 Chandlersville Rd, Zanesville, Ohio 43056",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,CISE-SGO,88-3142134,,,,,"100 E. 8th Street, Cincinnati, Ohio 45202",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Give For Kids Scholarship Fund,39-4236057,,,,,"4334 BAINTREE RD, University Heights, Ohio 44118",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Heights Tax Credit SGO,41-4353004,,,,,"260 Fenwick Road, University Heights, Ohio 44118",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Saint Ursula Academy Foundation Inc.,34-1886759,,,,,"4025 Indian Road, Toledo, Ohio 43606",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-OH,Waldorf Method Education Scholarship Association,93-3579746,,,,,"76 Charleston Ave., Columbus, Ohio 43214",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List
-PA,Armstrong County Community Foundation,,(724) 548-5897,jodi@servingtheheart.org,www.servingtheheart.org,,"220 S. Jefferson Street, Suite B, Kittanning, PA  16201",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Athletic Club of Fairhill Inc.,,(267) 908-9166,acfairhill@gmail.com,www.acfairhilll.com,,"1205 E. Columbia Ave., Philadelphia, PA  19125",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Bryn Athyn Church of the New Jerusalem,,(215) 544-1407,Fauve.Nash@brynathynchurch.org,www.brynathynchurch.org,,"600 Tomlinson Rd., PO Box 277, Bryn Athyn, PA  19009",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Buckingham Friends School,,(215) 794-7496,sfrenkel@bfs.org,www.bfs.org,,"5684 York Road, Lahaska, PA  18931",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Calvary Christian Academy,,(215) 969-1579,Mpennisi@ccphilly.org,www.cca.ccphilly.org,,"13500 Philmont Avenue, Philadelphia, PA  19116",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Camphill Special School Inc.,,(610) 469-9236,cripple@camphillschool.org,www.camphillschool.org/,,"1784 Fairview Road, Glenmoore, PA  19343",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Chabad Jewish Scholarship Foundation,,(215) 591-9310,devorah@jewishmc.com,,,"1311 Fort Washington Ave., Fort Washington, PA  19034",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Community Foundation of Fayette County,,(724) 437-8600,cvalentine@cffayettepa.org,www.cffayettepa.org,,"250 West Main Street, Uniontown, PA  15401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Community Foundation of Greene County,,(724) 627-2010,dave.cfgcpa@gmail.com,www.cfgcpa.org,,"108 East High Street, P.O. Box 768, Waynesburg, PA  15370",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Comprehensive Learning Center Inc.,,(215) 956-3861,kmartin@clcschoolprograms.org,www.clcschoolprograms.org,,"444 Jacksonville Rd., Warminster, PA  18974",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Crispus Attucks Association Inc.,,(717) 848-3612,dwilliams@crispusattucks.org,www.crispusattucks.org,,"605 S. Duke Street, York, PA  17401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,dePaul School in Northeastern Pennsylvania,,(570) 534-4736,cgilroy@friendshiphousepa.org,www.depaulschoolnepa.org,,"415 Biden Street, Scranton, PA  18505",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Discovery MI Preschool d/b/a Discovery Montessori,,(570) 702-7909,mydiscoverypreschool@gmail.com,www.discoverypa.org,,"1733 N. Main Ave, Scranton, PA  18508",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Extra Mile Education Foundation Inc.,,(412) 716-8637,avescio@extramilefdn.org,www.extramilefdn.org,,"603 Stanwix St., Suite 348, Pittsburgh, PA  15222",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,First Regular Baptist Church of Northumberland,,(570) 473-9786,jdrees@norrychristian.net,www.norrychristian.net,,"Northumberland Christian School, 351 Fifth Street, Northumberland, PA  17857",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,First Tee Greater Philadelphia,,(215) 680-5750,jmcaleese@firstteephila.org,www.firstteephiladelphia.org,,"800 Walnut Lane, Philadelphia, PA  19128",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Fund for Girard College,,(215) 787-4436,resposito@girardcollege.edu,www.girardcollege.edu/support/fund/,,"2101 S. College Avenue, Philadelphia, PA  19121",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,George Junior Republic,,(724) 458-9330,tduong@gjr.org,www.GJR.org,,"233 George Junior Road, Grove City, PA  16127",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Goals and Assists Foundation,,(215) 952-5271,sharan@sniderhockey.org,www.sniderhockey.org,,"3601 S. Broad Street, Philadelphia, PA  19148",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Heritage Community Initiatives,,(412) 351-0535,lkelley@heritageserves.org,www.heritageserves.org,,"820 Braddock Avenue, Braddock, PA  15104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,High Point Classical Academy,,(570) 592-4203,bakolodgie@highpointclassicalacademy.com,highpointclassicalacademy.com,,"1919 Mountain Road, Larksville, PA  18651",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Hill School,,(610) 705-1199,kkoller@thehill.org,www.thehill.org,,"860 Beech Street, Pottstown, PA  19484",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,HMS School for Children with Cerebral Palsy,,(215) 222-2566,Cpimentel@HMSSchool.org,www.hmsschool.org,,"4400 Baltimore Avenue, Philadelphia, PA  19104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,House of Hope York PA,,(717) 235-3198,lori.ziegler@houseofhopeyork.org,www.houseof hopeyork.org,,"23 N. Pleasant Avenue, Jacobus, PA  17407",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,IFA Foundation,,(484) 919-0282,john@ifa.llc,,,"7157 Camp Hill Rd., Fort Washington, PA  19034",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Independence Mission Schools,,(215) 771-7038,bfoley@imsphila.org,https://imsphila.org/,,"1012 W. Thompson Street, Philadelphia, PA  19122",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Jewish Community Alliance of Northeastern Pennsylvania,,(570) 574-1136,jgillespie@nepajca.org.,www.jewishwilkes-barre.org,,"613 S.J. Strauss Lane, Kingston, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Joey F. Casey Memorial Foundation,,(215) 512-2685,tcrosset@outlook.com,www.joeycasey.com,,"8121 Cresco Avenue, Philadelphia, PA  19136",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Kimberton Waldorf School,,(610) 933-3635,development@kimberton.org,www.kimberton.org,,"410 West Seven Stars Road, Phoenixville, PA  19460",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Kiskiminetas Springs School,,(724) 639-8047,vickie.fluharty@kiski.org,www.kiski.org,,"1888 Brett Lane, Saltsburg, PA  15681",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Lancaster County Career & Technology Foundation,,(717) 653-3009,jbaker@lancasterctc.edu,www.lcctf.org,,"432 Old Market Street, Mt. Joy, PA  17552",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Linden Hall School for Girls,,(717) 626-8512,business@lindenhall.org,www.lindenhall.org,,"212 E. Main Street, Lititz, PA  17543",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Logos Academy (Harrisburg),,(717) 727-5154,lauren.bonnema@logoshbg.org,www.logosHBG.org,,"251 Verbeke Street, Harrisburg, PA  17102",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Logos Academy Scholarship Organization,,(717) 848-9835,lisa.knier@logosyork.org,www.logosyork.org,,"250 West King Street, York, PA  17401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Meadowbrook Christian School Scholarship Organization K-12,,(570) 742-2638,sheri.hoffman@mcslions.org,www.mcslions.org,,"Wesleyan Church Corporation, 363 Stamm Road, Milton, PA  17847",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Mercersburg Academy,,(717) 328-6359,batsonm@mercersburg.edu,www.mercersburg.edu,,"100 Academy Drive, Mercersburg, PA  17236",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Montessori Academy of Lancaster,,(717) 560-0815,carol@montlanc.com,www.montlanc.com,,"2750 Weaver Road, Lancaster, PA  17601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Montgomery County Scholarships Inc.,,(215) 253-8511,jed.silversmith@pataxcredits.org,www.pataxcredits.org/,,"101 Greenwood Avenue, Suite 380, Jenkintown, PA  19046",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Our Promise Inc.,,(267) 825-3188,sherman.washi@gmail.com,,,"1205 E. Columbia Ave., Philadelphia, PA  19125",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Pen Ryn School,,(215) 547-1800,billodcpa@aol.com,www.penryn.org,,"235 South Olds Boulevard, Fairless Hills, PA  19030",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Penn-Mont Academy,,(814) 696-8801,kathleen.dombrosky@pennmontacademy.com,www.pennmontacademy.com,,"131 Holliday Hills Drive, Hollidaysburg, PA  16648",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Perkiomen School,,(267) 717-5548,sfarrand@perkiomen.org,www.perkiomen.org,,"200 Seminary Street, Pennsburg, PA  18073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Phase 4 Learning Center Inc.,,(215) 650-9004,eraphael@phase4lc.org,www.phase4learningcenter.org,,"5850 Centre Avenue, Pittsburgh, PA  15206",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Philadelphia School of Democracy Inc.,,(215) 218-9586,mark@phillyfreeschool.org,www.phillyfreeschool.org,,"4950 Springfield Ave., Philadelphia, PA  19143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Solebury School,,(215) 862-5261,mmarshall@solebury.org,www.solebury.org,,"6832 Phillips Mill Road, New Hope, PA  18938",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,St. Stephen's Episcopal School,,(717) 238-8590,dshaffer@sseschool.org,www.sseschool.org,,"215 N. Front Street, Harrisburg, PA  17101",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,State College Friends School,,(814) 237-8386,jlove@scfriends.org,www.scfriends.org,,"1900 University Drive, State College, PA  16801",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Susquehanna Waldorf School,,(717) 649-1344,deborah.duke@susquehanna.org,www.susquehannawaldorf.org,,"15 West Walnut St., Marietta, PA  17547",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Talk Institute and School a/k/a Talk Inc.,,(610) 356-5566,kristen.tabun@talkinc.org,www.talkinc.org,,"6 Campus Blvd., Newtown Square, PA  19073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,The Concept School,,(610) 399-1135,slevine@theconceptschool.org,www.theconceptschool.org,,"1120 E. Street Rd., Westtown, PA  19395",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,The School in Rose Valley,,(610) 566-1088,nava@theschoolinrosevalley.org,www.theschoolinrosevalley.org,,"20 School Lane, Rose Valley, PA  19063",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,The Vista School,,(717) 583-5102,communications@vistaautismservices.org,www.thevistaschool.org,,"1021 Springboard Drive, Hershey, PA  17033",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Tom Johnson Boys Academy d/b/a Mon Valley Boys Academy,,(412) 599-1458,sheila.rawlings@mytjba.org,mytjba.org,,"653 S. Agnes Lane, West Mifflin, PA  15122",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Trinity Lutheran Church & School,,(570) 724-7723,bkohler@trinitylutheranwellsboro.org,www.trinitylutheranwellsboro.org,,"53 West Avenue, Wellsboro, PA  16901",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,United Disabilities Services,,(717) 715-8770,elizabethb@udservices.org,www.udservices.org/school,,"2270 Erin Court, Lancaster, PA  17601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Valley School of Ligonier,,(724) 238-5028,development@valleyschoolofligonier.org,www.valleyschoolofligonier.org,,"P.O. Box 616, Ligonier, PA  15658",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Villa Joseph Marie High School,,(215) 357-8810,lharkrader@vjmhs.org,www.vjmhs.org,,"1180 Holland Road, Holland, PA  18966",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Villa Maria Academy Lower School,,(610) 644-4864,pscanlon@villamaria.org,www.villamaria.org,,"280 IHM Drive, Malvern, PA  19355",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Water Street Ministries,,(717) 358-2084,mwilcox@wsm.org,www.wsm.org,,"P.O. Box 7267, Lancaster, PA  17604",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Watson Institute,,(412) 749-2885,karam@thewatsoninstitute.org,www.thewatsoninstitute.org,,"301 Camp Meeting Road, Sewickley, PA  15143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Western Pennsylvania Montessori School,,(412) 487-2700,director@wpms.edu,www.wpms.edu,,"2379 Wyland Ave., Allison Park, PA  15101",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Westtown School,,(610) 399-7922,courtnay.tyus@westtown.edu,www.westtown.edu,,"975 Westtown Road, West Chester, PA  19382",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Wyoming Valley Children's Association,,(570) 714-1246,nzanon@wvcakids.org,www.wvcakids.org,,"1133 Wyoming Avenue, Forty Fort, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Wyoming Valley Montessori Association Inc.,,(570) 288-3708,cdecker@wvms.org,www.wvms.org,,"d/b/a Wyoming Valley Montessori School, 851 West Market Street, Kingston, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,Yeshiva Academy of Harrisburg Foundation,,(717) 574-9121,martinlowy@comcast.net,www.silveracademypa.org,,"d/b/a Silver Academy Foundation, 4218 Prosperous Drive, Harrisburg, PA  17112",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,York College of Pennsylvania,,(717) 815-6711,dkey1@ycds.org,www.ycds.org,,"441 Country Club Road, York, PA  17403",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-PA,YSC Academy,,(610) 722-0500,gokupniarek@strikerpartners.com,www.yscacademy.com,,"2501 Seaport Drive, Union Power Plant, River Front Suite No. 100, Chester, PA  19013",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv
-VA,Autism Envisioned Foundation,,(703) 828-5614,,www.autismenvisioned.com,,"Vienna, VA 22180",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,Rise Academy,,(804) 236-4964,,https://www.riserichmond.org,,"Richmond, VA  23223",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,Hargrave Foundation,,(434) 432-2583,,,,"Chatham, VA  24531",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,Commonwealth Opportunity Scholars,,(571) 212-0058,,,,"Alexandria, VA 22315",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,The Hunter School Foundation,,(804) 708-0048,,www.hunterclassicalchristian.org,,"Henrico, VA 23229",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,Torah Education Scholarship Foundation,,(804) 433-1512,,,,"Glen Allen, VA 23059",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
-VA,UP RVA,,(804) 390-3151,,www.uprva.com,,"Richmond, VA 23223",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000
+state,name,ein,phone,email,website,Contact Name,address,Ruling Date,raw_source,known
+AL,Renaissance Scholarships Inc.,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AL,Deontaye V. Caple Scholarship Foundation,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AL,Alabama Opportunity Scholarship Fund,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AL,C2 Opportunity Scholarships LLC,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AL,Children’s Tuition Fund of Alabama,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,
+AL,Rocket City Scholarship Granting Organization Inc.,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AL,Scholarships for Kids Inc.,,,,,,,,https://www.revenue.alabama.gov/legal/annual-public-report-information/,Yes
+AZ,Arizona Private Education Scholarship Fund,,(480) 699-8911,,apesf.org,,"15900 North 78 Street, Ste. 210 Scottsdale, AZ 85260",,https://azdor.gov/sites/default/files/2023-06/REPORTS_sto-i-list.pdf,Yes
+AZ,Institute for Better Education (IBE),,(520) 512-5438,,ibescholarships.org,,"921 N. Swan Road Tucson, AZ 85711",,https://azdor.gov/sites/default/files/2023-06/REPORTS_sto-i-list.pdf,Yes
+AZ,Valley Tuition Organization,,(602) 842-1795,,valleytuitionorganization.org,,"10645 N Tatum Blvd C200-294 Phoenix, AZ 85028",,https://azdor.gov/sites/default/files/2023-06/REPORTS_sto-i-list.pdf,Yes
+FL,A.A.A. Scholarship Foundation- FL LLC,,(888) 707-2465,info@aaascholarships.org,http://www.aaascholarships.org/,,"P.O. Box 15719, Tampa, FL 33684",,https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/,Yes
+FL,Step Up For Students,,(877) 735-7837,info@stepupforstudents.org,http://www.stepupforstudents.org,,"P.O. Box 54367, Jacksonville, FL 32245-4367",,https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/,Yes
+FL,Sunshine State Kids,,(954) 353-6660,admin@sunshinestatekidsfl.org,https://sunshinestatekidsfl.org/,,"5870 Stirling Rd, Hollywood, FL 33021",,https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/sfo/,
+GA,A A A Scholarship Foundation Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Alyn Scholarship Fund. Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,Apogee Georgia School Choice Scholarship Fund,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,Christian Int Counseling and Ministries,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Georgia GOAL Scholarship Program Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Georgia Student Scholarship Organization Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Georgia Tax Credit Scholarship Program Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Golden Dome Scholarship Fund Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,GRACE Scholars Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,GREAT SSO Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,Student Scholarship Organization for Greek Americans,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,A Pay It Forward Scholarship Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,
+GA,Arete Scholars Fund,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,Learning to Serve,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,PACE Scholarship Organization Corp.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,The Georgia Tuition Assistance Program Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+GA,Vision SSO Inc.,,,,,,,,https://dor.georgia.gov/student-scholarship-organization-audit-reports,Yes
+IN,Community Foundation of Elkhart County,,,,,,,,https://www.in.gov/doe/files/Certified-SGOs.pdf,Yes
+IN,The Lutheran Scholarship Granting Organization of Indiana Inc.,,,,,,,,https://www.in.gov/doe/files/Certified-SGOs.pdf,Yes
+KS,ACE Scholarships SGO Kansas LLC,,(303) 407-0611,lrhodes@acescholarships.org,,,"5251 DTC Parkway, Suite 1150 Greenwood Village CO 80111",,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,
+KS,Catholic Education Foundation,,(913) 721-1573,dherrman@archkck.org,,,12615 Parallel Parkway Kansas City KS 66109,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Center for Behavioral and Academic Research,,(316) 239-6472,alycia@mcadamsacademy.com,,,903 S. Glenn Avenue Wichita KS 67213,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,
+KS,Christian Faith Centre Inc.,,(316) 682-3544,wellfavoredman@yahoo.com,,,1130 South Broadway Wichita KS 67211,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Cornerstone Charitable Foundation,,(785) 738-8774,joewalter320@gmail.com,,,1110 N. Independence Beloit KS 67420,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Golden Belt Community Foundation,,(620) 792-3000,jason@goldenbeltcf.org,,,1307 Williams St. Great Bend KS 67530,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,
+KS,Kansas Lutheran Schools Scholarship Foundation Inc.,,(785) 357-4441,daniel@kslcms.org,,,1000 SW 10th Avenue Topeka KS 66604,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,The Independent School,,(316) 685-0152,ronda.goode@theindependentschool.com,,,8317 E. Douglas Wichita KS 67207,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Prime Fit Youth Foundation SGO,,(316) 214-2568,primefittrainer@gmail.com,,,7719 W 11th St. N Wichita KS 67212,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Renewanation,,(540) 890-8900,curtis@renewanation.org,,,1110 Gravel Hill Rd Vinton VA 24179,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Scholarships for Catholic Schools Inc.,,(620) 227-1513,tdelgado@dcdiocese.org,,,910 Central Ave Dodge City KS 67801,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,St. Paul Lutheran School Foundation,,(913) 683-9604,john@jfdenney.com,,,320 N. 7th St. Leavenworth KS 66048,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Support for Catholic Schools Inc.,,(316) 269-3915,schrockm@catholicdioceseofwichita.org,,,424 N. Broadway Wichita KS 67202,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,Yes
+KS,Word of Life Ministries and Schools Inc.,,(316) 644-3070,prob@wolm.org,,,915 E. 53rd St. Wichita KS 67219,,https://www.ksde.gov/docs/default-source/sf/sgo-directory-05122026.pdf,
+LA,ACE Scholarships Louisiana,,,,https://www.acescholarships.org/become-a-scholar/louisiana/,,,,https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program,
+LA,Arete Scholars Louisiana,,,,http://www.aretescholars.org/,,,,https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program,Yes
+LA,Aspiring Scholars Louisiana,,,,https://aspiringscholarsla.org/,,,,https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program,Yes
+LA,Son of a Saint Louisiana,,,,https://sonofasaint.org/,,,,https://doe.louisiana.gov/topic-pages/louisiana-school-choice/tuition-donation-credit-program,Yes
+MO,Agudath Israel of Illinois dba Agudath Israel of Missouri,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,
+MO,Bright Futures Fund,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,Yes
+MO,Children's Tuition Fund of MO,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,
+MO,Herzog Tomorrow Foundation,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,Yes
+MO,Missouri District of the Lutheran Church - Missouri Synod,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,
+MO,Today and Tomorrow Educational Foundation,,,,,,,,https://treasurer.mo.gov/Content/MOScholars_Information/MOScholarsEAOList2024-2025.xlsx,
+MT,ACE Scholarships SSO Montana LLC,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,
+MT,Big Sky Community School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Central Education Foundation of Silver Bow,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Elevation Foundation Inc,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Great Falls Central Catholic High School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Holy Spirit Catholic School doing business as St. Patrick's Academy,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Kalispell Montessori Center Inc,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Manhattan Christian School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Missoula Catholic Schools Foundation,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Missoula Christian Montessori School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Montana Leadership Foundation,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Our Lady of Lourdes Catholic School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Saint Matthew Parish Series 535 LLC,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,The Headwaters Academy Inc.,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,The Skola,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,The Summit Lighthouse Inc.,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,The Way Christian School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Valley Christian School,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+MT,Woodland Montessori School Foundation,,,,,,,,https://svc.mt.gov/dor/educationdonation2/Pages/Reports/PublicStats?dt=SSO,Yes
+NH,The Children’s Scholarship Fund,,,,,,,,https://www.revenue.nh.gov/sites/g/files/ehbemt736/files/documents/scholarship-organizations-approved-2025-2026.pdf,
+NV,AAA Scholarship Foundation-NV LLC,,(888) 707-2465,kim@aaascholarships.org,,,"1452 W. Horizon Ridge Road, #541, Henderson NV 89012",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf,
+NV,America’s Scholarship Konnection,,(866)622-4ASK,info@askscholarships.org,,,"24 W. Camelback Road Suite A 535,Phoenix, AZ 85013",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf,Yes
+NV,Silver State Scholarships,,(702) 736-7787,scholarships@silverstatescholarships.org,,,"6655 W. Sahara Ave. #D106 Las Vegas, NV 89146",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf,
+NV,Education Fund of Northern Nevada,,(775) 742-4285,efnninfo@gmail.com,,,"3025 Mill Street, Reno, NV 89509",,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf,Yes
+NV,Student Choice Fund of Nevada,,(702) 410-8143,studentchoicefundofnevada@gmail.com,,,1755 Village Center Circle studentchoicefundofnevada.org,,https://webapp-strapi-paas-prod-nde-001.azurewebsites.net/uploads/Registered_Scholarship_Organizations_af21ccf71e.pdf,Yes
+OH,1 BBH Bees SGO,41-3833782,,,No 990N,% JAMI AQUINO,"9305 OXFORD TRAIL, BRECKSVILLE, Ohio 44141",202603,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,ABC Ohio Foundation,33-2382950,,,,,"351 Aurora Street, Hudson, Ohio 44236",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,American Scholarship Network,42-1945763,,,No 990N,,"4456 N Abbe Rd #305, Sheffield Village, Ohio 44054",202604,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Aurora City Schools Scholarship Granting Organization,41-2906278,,,aurorasgo.org,% RACHEL M REIGHT,"PO Box 109, Aurora, Ohio 44202",202601,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Buckeye Christian School Organization,34-1417866,,,,,"2400 Chandlersville Rd, Zanesville, Ohio 43056",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Chaminade Julienne Catholic Education Fund,99-1384296,,,,,"505 S Ludlow St, Dayton, Ohio 45402",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,CISE-SGO,88-3142134,,,,,"100 E. 8th Street, Cincinnati, Ohio 45202",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Give For Kids Scholarship Fund,39-4236057,,,,,"4334 BAINTREE RD, University Heights, Ohio 44118",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Heights Tax Credit SGO,41-4353004,,,,,"260 Fenwick Road, University Heights, Ohio 44118",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Julie Billiart Network Scholarship Granting Organization,33-1279122,,,,,"6140 Parkland Blvd, Ste. 300, Mayfield Heights, Ohio 44124",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Lutheran Scholarship Granting Organization of Ohio,87-3374872,,,,,"3870 Linden Rd, Rocky River, Ohio 44116",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Mount Notre Dame SGO,92-3287314,,,,,"711 E. Columbia Avenue, CINCINNATI, Ohio 45215",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Mustard Seed Education Foundation,83-1341078,,,,,"43 S. HURON ST., TOLEDO, Ohio 43604",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Nordonia Hills Schools Scholarship Granting Organization,92-2756655,,,,,"219 W AURORA RD STE A, NORTHFIELD, Ohio 44067",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Notre Dame Academy Foundation,82-3446307,,,,,"3535 W. Sylvania Avenue, Toledo, Ohio 43623",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Notre Dame Schools Scholarship Granting Organization,88-1481999,,,,,"13000 Auburn Road, Chardon, Ohio 44024",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Ohio Association of Independent Schools Scholarship Granting Organizations,87-4616853,,,,,"P.O. Box 492, Granville, Ohio 43023",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Saint Joseph Academy Scholarship Granting Organization,92-1890302,,,,,"3470 Rocky River Drive, Cleveland, Ohio 44111",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Saint Ursula Academy Foundation Inc.,34-1886759,,,,,"4025 Indian Road, Toledo, Ohio 43606",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+OH,Seton Cincinnati SGO,92-2429826,,,,,"3901 Glenway Avenue, Cincinnati, Ohio 45205",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,SMDPHS Scholarship Granting Organization,93-1632132,,,,,"6202 St. Clair, CLEVELAND, Ohio 44103",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,St. Francis de Sales High School Foundation,34-1696266,,,,,"2323 W Bancroft St, Toledo, Ohio 43607",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,The Scholarship Granting Organization OF The Catholic Community Foundation,87-3652751,,,,,"1404 East 9th Street, Cleveland, Ohio 44114",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,The ST Johns Jesuit Scholarship Granting Organization,92-2707224,,,,,"5901 Airport Hwy, Toledo, Ohio 43615",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Ursuline Foundation,31-1233054,,,,,"5535 Pfeiffer Road, Cincinnati, Ohio 45242",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,Yes
+OH,Waldorf Method Education Scholarship Association,93-3579746,,,,,"76 Charleston Ave., Columbus, Ohio 43214",,https://charitable.ohioago.gov/Scholarship-Granting-Organization-Certification/List,
+PA,Academy in Manayunk d/b/a AIM Academy,,(215) 483-2461,development@aimpa.org,www.aimpa.org,,"1200 River Road, Conshohocken, PA  19428",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Academy of Notre Dame de Namur,,(610) 971-1630,tkyle@ndapa.org,www.ndapa.org,,"560 Sproul Road, Villanova, PA  19085",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,ACSI Children's Education Fund d/b/a Children's Tuition Fund of Pennsylvania,,(717) 285-3022,saralee_lenhart@acsi.org,www.childrenstuitionfund.org,,"P.O. Box 62249, Colorado Springs, CO  80962",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Agnes Irwin School,,(610) 801-1260,erauch@agnesirwin.org,www.agnesirwin.org,,"275 S. Ithan Ave., Bryn Mawr, PA  19010",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Aquinas Academy,,(724) 444-0722,leonard@aquinasacademy-pittsburgh.org,www.aquinasacademy-pittsburgh.org,,"2308 West Hardies Road, Gibsonia, PA  15044",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Armstrong County Community Foundation,,(724) 548-5897,jodi@servingtheheart.org,www.servingtheheart.org,,"220 S. Jefferson Street, Suite B, Kittanning, PA  16201",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Athletic Club of Fairhill Inc.,,(267) 908-9166,acfairhill@gmail.com,www.acfairhilll.com,,"1205 E. Columbia Ave., Philadelphia, PA  19125",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Benchmark School,,(610) 565-3741,joemcpeak@benchmarkschool.org,www.benchmarkschool.org,,"2107 N. Providence Road, Media, PA  19063",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Berks County Community Foundation,,(610) 685-2223,frankia@bccf.org,www.bccf.org,,"237 Court Street, Reading, PA  19601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Bridge Educational Foundation,,(717) 214-6792,natalie.nutt@bridgeedu.org,www.bridgeedu.org,,"909 Green Street, Harrisburg, PA  17102",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Bryn Athyn Church of the New Jerusalem,,(215) 544-1407,fauve.nash@brynathynchurch.org,www.brynathynchurch.org,,"600 Tomlinson Rd., PO Box 277, Bryn Athyn, PA  19009",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Buckingham Friends School,,(215) 794-7496,sfrenkel@bfs.org,www.bfs.org,,"5684 York Road, Lahaska, PA  18931",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Business Leadership Organized for Catholic Schools (BLOCS),,(484) 704-2307,kharvey@blocs.org,www.blocs.org,,"Croton Road Corporate Center, 555 Croton Road, Suite 310, King of Prussia, PA  19406",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Buxmont Academy,,(215) 534-5215,mdeantonio@csfbuxmont.org,www.csfbuxmont.org,,"531 Main Street, Bethlehem, PA  18018",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Byerschool Foundation,,(215) 772-3053,rgelb@byerschool.org,www.byerschool.org,,"1911 Arch Street, Philadelphia, PA  19103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,C.B. Community Schools,,(267) 766-3130,mmccrea@cbcommunityschools.org,www.communityschools.org,,"4101 Freeland Avenue, Philadelphia, PA  19128",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Calvary Christian Academy,,(215) 969-1579,mpennisi@ccphilly.org,www.cca.ccphilly.org,,"13500 Philmont Avenue, Philadelphia, PA  19116",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Camphill Special School Inc.,,(610) 469-9236,cripple@camphillschool.org,www.camphillschool.org/,,"1784 Fairview Road, Glenmoore, PA  19343",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Carnegie Mellon University,,(412) 268-2198,lh37@andrew.cmu.edu,www.cmu.edu/dietrich/psychology/cs/index.html,,"Carnegie Mellon Children's School, 5000 Forbes Avenue, MMC-17, Pittsburgh, PA  15213",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Carroll Patriot Educational Fund,,(267) 838-3462,cokeefe@jcarroll.org,www.jcarroll.org,,"Archbishop Carroll High School, 211 Matsonford Road, Radnor, PA  19087",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Center School,,(215) 657-2200,jbean@centerschoolpa.org,www.centerschoolpa.org,,"2450 Hamilton Avenue, Abington, PA  19001",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Central Pennsylvania Scholarship Fund,,(814) 942-4406,tami@cpsfcharity.org,www.pennsylvaniaeitc.org,,"501 3rd Street, Tyrone, PA  16686",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Chabad Jewish Scholarship Foundation,,(215) 591-9310,devorah@jewishmc.com,,,"1311 Fort Washington Ave., Fort Washington, PA  19034",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Children First America Delaware County,,(610) 872-7472,cfadelawareco@aol.com,www.cfadelco.org,,"1005 W. 7th Street, Chester, PA  19013",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Children's Scholarship Fund of Pennsylvania,,(814) 226-4160,mbauer@kriebelgas.com,www.csfofpa.org,,"633 Mayfield Road, Clarion, PA  16214",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Children's Scholarship Fund Philadelphia,,(215) 670-8411,mstaples@csfphiladelphia.org,www.csfphiladelphia.org,,"1500 Walnut Street, Suite 1300, Philadelphia, PA  19102",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Christian School Association of Greater Harrisburg Inc.,,(717) 982-2839,daniel.king@csagh.org,www.csagh.org,,"2000 Blue Mountain Parkway, Harrisburg, PA  17112",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Christian School Association of York,,(717) 767-6842,aallen@csyonline.com,www.csyonline.com,,"907 Greenbriar Rd., York, PA  17404",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Commonwealth Charitable Management Inc.,,(570) 278-3800,cclayton@commonwealthcharitable.org,www.commonwealthcharitable.org,,"270 Lake Avenue, Montrose, PA  18801",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Community Country Day School,,(814) 833-7933,angelacollins@ccdserie.com,www.ccdserie.com,,"5800 Old Zuck Road, Erie, PA  16506",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Community Foundation of Fayette County,,(724) 437-8600,cvalentine@cffayettepa.org,www.cffayettepa.org,,"250 West Main Street, Uniontown, PA  15401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Community Foundation of Greene County,,(724) 627-2010,dave.cfgcpa@gmail.com,www.cfgcpa.org,,"108 East High Street, P.O. Box 768, Waynesburg, PA  15370",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Community Foundation of Western PA and Eastern OH,,(724) 981-5882,julia@comm-foundation.org,www.comm-foundation.org,,"7 West State Street, Suite 301, Sharon, PA  16146",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Community Partnership School,,(215) 235-0461,m.closter@cpsphilly.org,www.communitypartnershipschool.org,,"3033 W. Glenwood Avenue, Philadelphia, PA  19121",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Comprehensive Learning Center Inc.,,(215) 956-3861,kmartin@clcschoolprograms.org,www.clcschoolprograms.org,,"444 Jacksonville Rd., Warminster, PA  18974",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Cornerstone Christian Academy,,(215) 724-6858,dblackwell@cornerstonephiladelphia.com,www.wearecornerstone.com,,"1939 S. 58th Street, P.O. Box 5520, Philadelphia, PA  19143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Crispus Attucks Association Inc.,,(717) 848-3612,dwilliams@crispusattucks.org,www.crispusattucks.org,,"605 S. Duke Street, York, PA  17401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Cristo Rey Philadelphia High School,,(215) 219-3943,ljensen@crphs.org,www.cristoreyphiladelphia.org,,"1717 W. Allegheny Avenue, Philadelphia, PA  19132",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Crossroads Foundation,,(412) 228-4611,kkalson@crfdn.org,www.crossroadsfoundation.org,,"6901 Lynn Way, Pittsburgh, PA  15208",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Dayspring Christian Academy,,(717) 285-2000,jriddell@dayspringchristian.com,www.dayspringchristian.com,,"120 College Avenue, Suite 106, Mountville, PA  17554",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Delaware Valley Friends School,,(610) 640-4150,stephanie.speakman@dvfriends.org,www.dvfriends.org,,"19 E. Central Ave., Paoli, PA  19301",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,dePaul School in Northeastern Pennsylvania,,(570) 534-4736,cgilroy@friendshiphousepa.org,www.depaulschoolnepa.org,,"415 Biden Street, Scranton, PA  18505",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Devon Preparatory School,,(610) 688-7337,sroxberry@devonprep.com,www.devonprep.com,,"363 N. Valley Forge Road, Devon, PA  19333",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Diocese of Scranton Scholarship Foundation,,(570) 207-2251,kdonohue@dioceseofscranton.org,www.dioceseofscranton.org,,"300 Wyoming Avenue, Scranton, PA  18503",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Discovery MI Preschool d/b/a Discovery Montessori,,(570) 702-7909,mydiscoverypreschool@gmail.com,www.discoverypa.org,,"1733 N. Main Ave, Scranton, PA  18508",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Drexel Neumann Academy,,(610) 872-7358,f.gillen@drexelneumannacademy.net,www.drexelneumannacademy.net,,"1901 Potter Street, Chester, PA  19013",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Eastern Pennsylvania Scholarship Foundation - Diocese of Allentown,,(484) 704-2311,aimpellizzeri@blocs.org,www.allentowndiocese.org,,"P.O. Box F, 1515 Martin Luther King Jr. Drive, Allentown, PA  18102",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Erie Day School Inc.,,(814) 452-4273,sgrosch@eriedayschool.com,www.eriedayschool.org,,"1372 West Sixth Street, Erie, PA  16505",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Everence Foundation Inc. d/b/a Mennonite Foundation,,(717) 653-6662,elyse.kauffman@everence.com,www.everence.com,,"1110 N. Main St., P.O. Box 483, Goshen, IN  46527",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Extra Mile Education Foundation Inc.,,(412) 716-8637,avescio@extramilefdn.org,www.extramilefdn.org,,"603 Stanwix St., Suite 348, Pittsburgh, PA  15222",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Faith Builders Educational Programs Inc.,,(814) 789-4518,secretary@fbscholarship.org,www.fbscholarship.org,,"28527 Guys Mills Rd., Guys Mills, PA  16327",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Faith Christian School Association of Monroe County Inc.,,(610) 588-8815,hazelton@fcslions.org,www.fcslions.org,,"122 Dante Street, Roseto, PA  18013",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Falk Laboratory School of the University of Pittsburgh,,(412) 624-8020,jill.sarada@pitt.edu,www.falkschool.pitt.edu/,,"4060 Allequippa Street, Pittsburgh, PA  15261",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Family Choice Scholarship Program of the PA Family Institute,,(717) 743-1146,familychoice@pafamily.org,www.myfamilychoice.org,,"23 North Front Street, Harrisburg, PA  17101",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,First Regular Baptist Church of Northumberland,,(570) 473-9786,jdrees@norrychristian.net,www.norrychristian.net,,"Northumberland Christian School, 351 Fifth Street, Northumberland, PA  17857",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,First Tee Greater Philadelphia,,(215) 680-5750,jmcaleese@firstteephila.org,www.firstteephiladelphia.org,,"800 Walnut Lane, Philadelphia, PA  19128",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Foundation for Catholic Education,,(610) 793-8065,jparsons@ctdi.com,www.foundationforcatholiceducation.org,,"1373 Enterprise Drive, West Chester, PA  19380",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Foundation for Jewish Day Schools of Greater Philadelphia,,(215) 832-0525,ematz@jewishphilly.org,www.jewishphilly.org,,"2001 Market St. - 23rd Floor, Philadelphia, PA  19103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Frankford Friends School,,(267) 513-8013,jwheeler@frankfordfriends.org,www.frankfordfriends.org,,"1500 Orthodox Street, Philadelphia, PA  19124",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,French International School of Philadelphia,,(610) 667-1284,leballeur@frenchschoolphila.org,www.frenchschoolphila.org,,"150 North Highland Avenue, Bala Cynwyd, PA  19004",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Friends' Central School,,(610) 645-5420,mdinofia@friendscentral.org,www.friendscentral.org,,"1101 City Avenue, Wynnewood, PA  19096",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Friends School Haverford,,(610) 642-2334,amyers@friendshaverford.org,www.friendshaverford.org,,"851 Buck Lane, Haverford, PA  19041",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Friends Select School,,(215) 561-5900,aneglawi@friends-select.org,www.friends-select.org,,"1651 Benjamin Franklin Parkway, Philadelphia, PA  19103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Fund for Girard College,,(215) 787-4436,resposito@girardcollege.edu,www.girardcollege.edu/support/fund/,,"2101 S. College Avenue, Philadelphia, PA  19121",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Fund for the Advancement of Minorities through Education Inc. (FAME),,(412) 363-5553,hmoreland@famefund.org,www.famefund.org,,"P.O. Box 100073, Pittsburgh, PA  15233",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,George Junior Republic,,(724) 458-9330,tduong@gjr.org,www.GJR.org,,"233 George Junior Road, Grove City, PA  16127",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,George School,,(215) 579-6573,ahessert@georgeschool.org,www.georgeschool.org,,"1690 Newtown Langhorne Road, Newtown, PA  18940",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Germantown Academy (Public School of Germantown),,(267) 405-7140,karen.wertz@germantownacademy.org,www.germantownacademy.net,,"340 Morris Road, Fort Washington, PA  19034",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Gesu School Inc.,,(267) 546-7484,rob.weinstein@gesuschool.org,www.gesuschool.org,,"1700 West Thompson Street, Philadelphia, PA  19121",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Gladwyne Montessori School,,(610) 649-1761,mdyson@gladwyne.org,www.gladwyne.org,,"920 Youngsford Road, Gladwyne, PA  19035",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Goals and Assists Foundation,,(215) 952-5271,sharan@sniderhockey.org,www.sniderhockey.org,,"3601 S. Broad Street, Philadelphia, PA  19148",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Greene Street Friends School,,(215) 438-7000,mwaldor@greenestreetfriends.org,www.greenestreetfriends.org,,"20 West Armat St, Philadelphia, PA  19144",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Greene Towne School,,(215) 563-6368,areath@gtms.org,www.gtms.org,,"55 N. 22nd Street, Philadelphia, PA  19103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Gwynedd Mercy Academy High School,,(267) 885-3717,cfrascatore@gmahs.org,www.gmahs.org,,"1345 Sumneytown Pike, Lower Gwynedd, PA  19002",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Harrisburg Academy,,(717) 763-7811,preston.s@harrisburgacademy.org,www.harrisburgacademy.org,,"10 Erford Road, Wormleysburg, PA  17043",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Heritage Community Initiatives,,(412) 351-0535,lkelley@heritageserves.org,www.heritageserves.org,,"820 Braddock Avenue, Braddock, PA  15104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,High Point Classical Academy,,(570) 592-4203,bakolodgie@highpointclassicalacademy.com,highpointclassicalacademy.com,,"1919 Mountain Road, Larksville, PA  18651",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Hill School,,(610) 705-1199,kkoller@thehill.org,www.thehill.org,,"860 Beech Street, Pottstown, PA  19484",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,HMS School for Children with Cerebral Palsy,,(215) 222-2566,cpimentel@hmsschool.org,www.hmsschool.org,,"4400 Baltimore Avenue, Philadelphia, PA  19104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Holy Family Foundation,,(412) 239-9011,sexauer.michael@hfi-pgh.org,www.hfi-pgh.org,,"8235 Ohio River Blvd., Pittsburgh, PA  15202",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Hope Partnership for Education,,(215) 232-5410,vsheppard@hope-partnership.org,www.hope-partnership.org,,"2601 N. 11th St., Philadelphia, PA  19133",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,House of Hope York PA,,(717) 235-3198,lori.ziegler@houseofhopeyork.org,www.houseof hopeyork.org,,"23 N. Pleasant Avenue, Jacobus, PA  17407",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,IFA Foundation,,(484) 919-0282,john@ifa.llc,,,"7157 Camp Hill Rd., Fort Washington, PA  19034",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Imani Christian Academy,,(412) 731-7982,pnzambi@imaniadmin.org,www.imanipgh.org,,"2150 East Hills Drive, Pittsburgh, PA  15221",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Independence Mission Schools,,(215) 771-7038,bfoley@imsphila.org,https://imsphila.org/,,"1012 W. Thompson Street, Philadelphia, PA  19122",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Indian Creek Valley Christian Family and Children's Center,,(724) 455-2122,merle_skinner@champion.org,www.champion.org,,"2166 Indian Head Rd., Champion, PA  15622",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Jewish Community Alliance of Northeastern Pennsylvania,,(570) 574-1136,jgillespie@nepajca.org.,www.jewishwilkes-barre.org,,"613 S.J. Strauss Lane, Kingston, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Jewish Federation of the Lehigh Valley,,(610) 821-5500,aaron@jflv.org,www.jewishlehighvalley.org,,"702 N. 22nd Street, Allentown, PA  18104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Joey F. Casey Memorial Foundation,,(215) 512-2685,tcrosset@outlook.com,www.joeycasey.com,,"8121 Cresco Avenue, Philadelphia, PA  19136",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Junior Achievement of Western PA,,(814) 691-7619,jknepper@jawesternpa.org,www.jawesternpa.org,,"90 Emerson Lane, Suite 1403, Bridgeville, PA  15017",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Keystone Christian Education Association,,(717) 564-1164,tclater@kcea.com,KCEA.com,,"6101 Bell Road, Harrisburg, PA  17111",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Kimberton Waldorf School,,(610) 933-3635,development@kimberton.org,www.kimberton.org,,"410 West Seven Stars Road, Phoenixville, PA  19460",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Kiskiminetas Springs School,,(724) 639-8047,vickie.fluharty@kiski.org,www.kiski.org,,"1888 Brett Lane, Saltsburg, PA  15681",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,La Salle Academy,,(215) 739-5804,mgthomson@lasalleacademy.net,www.lasalleacademy.net,,"1434 North 2nd Street, Philadelphia, PA  19122",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Lancaster Country Day School,,(717) 397-7240,lamars@lancastercountryday.org,www.lancastercountryday.org,,"725 Hamilton Road, Lancaster, PA  17603",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Lancaster County Career & Technology Foundation,,(717) 653-3009,jbaker@lancasterctc.edu,www.lcctf.org,,"432 Old Market Street, Mt. Joy, PA  17552",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Lancaster County Christian School,,(717) 556-0711,nlong@lccs.cc,www.lccs.cc,,"2390 New Holland Pike, Lancaster, PA  17601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Liguori Academy Inc.,,(267) 571-1952,mmarrone@liguoriacademy.org,www.liguoriacademy.org,,"2343 East Tucker Street, Philadelphia, PA  19125",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Linden Hall School for Girls,,(717) 626-8512,business@lindenhall.org,www.lindenhall.org,,"212 E. Main Street, Lititz, PA  17543",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,LOGAN Hope,,(215) 455-7442,jim@loganhope.org,www.loganhope.org,,"4934 N. 13th St., Philadelphia, PA  19141",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Logos Academy (Harrisburg),,(717) 727-5154,lauren.bonnema@logoshbg.org,www.logosHBG.org,,"251 Verbeke Street, Harrisburg, PA  17102",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Logos Academy Scholarship Organization,,(717) 848-9835,lisa.knier@logosyork.org,www.logosyork.org,,"250 West King Street, York, PA  17401",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Londonderry School,,(717) 540-0543,jennifer.pomerantz@thelondonderryschool.org,www.thelondonderryschool.org,,"1800 Bamberger Road, Harrisburg, PA  17110",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Malvern Preparatory School,,(484) 595-1122,nwertsch@malvernprep.org,www.malvernprep.org,,"418 S. Warren Avenue, Malvern, PA  19355",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,McGlynn Center,,(570) 824-8891,pnork@mcglynncenter.org,www.mcglynncenter.org,,"72 Midland Court, P.O. Box 842, Wilkes-Barre, PA  18702",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Meadowbrook Christian School Scholarship Organization K-12,,(570) 742-2638,sheri.hoffman@mcslions.org,www.mcslions.org,,"Wesleyan Church Corporation, 363 Stamm Road, Milton, PA  17847",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Media-Providence Friends School Inc.,,(610) 565-1960,cmcgoff@mpfs.org,www.mpfs.org,,"125 W. Third Street, Media, PA  19063",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Mercersburg Academy,,(717) 328-6359,batsonm@mercersburg.edu,www.mercersburg.edu,,"100 Academy Drive, Mercersburg, PA  17236",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Mercy Vocational High School,,(215) 226-1225,ngreen@mercycte.org,www.mercyvocational.org,,"d/b/a Mercy Career & Technical High School, 2900 W. Hunting Park Avenue, Philadelphia, PA  19129",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Mercyhurst Preparatory School,,(814) 824-2408,jgray@mpslakers.com,www.mpslakers.com,,"538 East Grandview Blvd., Erie, PA  16504",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Merion Mercy Academy,,(610) 664-6655,kcawley@merion-mercy.com,www.merion-mercy.com,,"511 Montgomery Ave., Merion Station, PA  19066",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,MMI Preparatory School,,(570) 636-1108,kmcnulty@mmiprep.org,www.mmiprep.org,,"154 Centre Street, Freeland, PA  18224",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Montessori Academy of Lancaster,,(717) 560-0815,carol@montlanc.com,www.montlanc.com,,"2750 Weaver Road, Lancaster, PA  17601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Montgomery County Scholarships Inc.,,(215) 253-8511,jed.silversmith@pataxcredits.org,www.pataxcredits.org/,,"101 Greenwood Avenue, Suite 380, Jenkintown, PA  19046",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Moravian Academy,,(610) 332-5291,bzaiser@mamail.net,www.moravianacademy.org,,"7 East Market Street, Bethlehem, PA  18018",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Nativity School of Harrisburg,,(717) 236-5602,er@nativityschoolofharrisburg.org,www.nativityharrisburg.org,,"2101 N. 5th Street, Harrisburg, PA  17110",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,NativityMiguel School of Scranton,,(570) 955-5176,rprislupski@nmscranton.org,www.nativitymiguelscranton.org,,"2300 Adams Ave., Scranton, PA  18509",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Neumann Scholarship Foundation,,(717) 657-4804,dbreen@hbgdiocese.org,www.hbgdiocese.org,,"4800 Union Deposit Road, Harrisburg, PA  17111",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Newtown Friends School,,(215) 968-2225,cfrank@newtownfriends.org,www.newtownfriends.org,,"1940 Newtown Langhorne Road, Newtown, PA  18940",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Our Lady of the Sacred Heart High School,,(412) 269-7726,ckarashin@olsh.org,www.olsh.org,,"1504 Woodcrest Avenue, Coraopolis, PA  15108",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Our Promise Inc.,,(267) 825-3188,sherman.washi@gmail.com,,,"1205 E. Columbia Ave., Philadelphia, PA  19125",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Pen Ryn School,,(215) 547-1800,billodcpa@aol.com,www.penryn.org,,"235 South Olds Boulevard, Fairless Hills, PA  19030",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Penngift Foundation Inc.,,(610) 286-1936,jcox@penngift.org,www.penngift.org,,"P.O. Box 121, Elverson, PA  19520",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Penn-Mont Academy,,(814) 696-8801,kathleen.dombrosky@pennmontacademy.com,www.pennmontacademy.com,,"131 Holliday Hills Drive, Hollidaysburg, PA  16648",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Perkiomen School,,(267) 717-5548,sfarrand@perkiomen.org,www.perkiomen.org,,"200 Seminary Street, Pennsburg, PA  18073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Phase 4 Learning Center Inc.,,(215) 650-9004,eraphael@phase4lc.org,www.phase4learningcenter.org,,"5850 Centre Avenue, Pittsburgh, PA  15206",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Philadelphia School of Democracy Inc.,,(215) 218-9586,mark@phillyfreeschool.org,www.phillyfreeschool.org,,"4950 Springfield Ave., Philadelphia, PA  19143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Pittsburgh Jewish Educational Improvement Foundation,,(412) 992-5250,sjablow@jfedpgh.org,www.jewishpgh.org,,"2000 Technology Drive, Pittsburgh, PA  15219",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,PJHS Scholarship Organization  (St. Joe's Prep & Scranton Prep),,(570) 941-7737,mweed@scrantonprep.com,www.scrantonprep.com,,"1000 Wyoming Avenue, Scranton, PA  18509",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Pocono Mountains United Way,,(570) 517-3955,michael@poconounitedway.org,www.poconounitedway.org,,"301 McConnell Street, Stroudsburg, PA  18360",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Poise Foundation,,(412) 281-4967,kjackson@poisefdn.org,www.poisefoundation.org,,"Two Gateway Center, Suite 1700, 603 Stanwix Street, Pittsburgh, PA  15222",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Quaker School at Horsham,,(215) 674-2875,gim@quakerschool.org,www.quakerschool.org,,"250 Meetinghouse Rd., Horsham, PA  19044",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Sacred Heart Academy Bryn Mawr,,(610) 527-3915,howard.walker@shabrynmawr.org,www.shabrynmawr.org,,"480 S. Bryn Mawr Avenue, Bryn Mawr, PA  19010",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Saint James School,,(484) 224-3886,taxcredit@stjamesphila.org,www.stjamesphila.org,,"3217 W. Clearfield Street, Philadelphia, PA  19132",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Salvaggio Academy,,(610) 530-5241,salvaggioacademy.tax@cai.io,www.salvaggioacademy.org,,"1390 Ridgeview Drive, Allentown, PA  18104",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Scholarship Partners Foundation,,(724) 552-2589,wbarnes@dioceseofgreensburg.org,www.dioceseofgreensburg.org,,"723 East Pittsburgh St., Greensburg, PA  15601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Scholastic Opportunity Scholarship Fund (SOS),,(412) 456-3085,mfreker@diopitt.org,www.diopitt.org,,"Diocese of Pittsburgh, 2900 Noblestown Rd., Pittsburgh, PA  15205",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Sewickley Academy,,(412) 741-2230,bvuono@sewickley.org,www.sewickley.org,,"315 Academy Avenue, Sewickley, PA  15143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Shady Side Academy,,(412) 968-3032,jscott@shadysideacademy.org,www.shadysideacademy.org,,"423 Fox Chapel Road, Pittsburgh, PA  15238",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Silverback Educational Foundation for the Arts Dance & Athletics,,(717) 856-9195,rstover@grahampartners.net,www.silverback-sefada.org,,"3811 West Chester Pike, Bldg. 2, Ste. 200, Newtown Square, PA  19073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Solebury School,,(215) 862-5261,mmarshall@solebury.org,www.solebury.org,,"6832 Phillips Mill Road, New Hope, PA  18938",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Spanish Scholarship Fund,,(610) 558-4593,rowers3@verizon.net,,,"1436 Lansdowne Ave, Darby, PA  19023",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Springside Chestnut Hill Academy,,(215) 754-1622,mboozer@sch.org,www.sch.org,,"500 West Willow Grove Avenue, Philadelphia, PA  19118",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,St. Edmund's Academy,,(412) 521-1907,dianamcallister@stedmunds.net,www.stedmunds.net,,"5705 Darlington Road, Pittsburgh, PA  15217",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,St. Stephen's Episcopal School,,(717) 238-8590,dshaffer@sseschool.org,www.sseschool.org,,"215 N. Front Street, Harrisburg, PA  17101",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,State College Friends School,,(814) 237-8386,jlove@scfriends.org,www.scfriends.org,,"1900 University Drive, State College, PA  16801",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Susquehanna Waldorf School,,(717) 649-1344,deborah.duke@susquehanna.org,www.susquehannawaldorf.org,,"15 West Walnut St., Marietta, PA  17547",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Talk Institute and School a/k/a Talk Inc.,,(610) 356-5566,kristen.tabun@talkinc.org,www.talkinc.org,,"6 Campus Blvd., Newtown Square, PA  19073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,The Baldwin School,,(610) 525-2700,brian.lorigan@baldwinschool.org,www.baldwinschool.org,,"701 Montgomery Ave., Bryn Mawr, PA  19010",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Campus Laboratory School of Carlow University,,(412) 578-2072,hashroyer@carlow.edu,www.camousschool.edu,,"3333 Fifth Avenue, Pittsburgh, PA  15213",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Church Farm School,,(610) 363-5383,advancement@gocfs.net,www.gocfs.net,,"1001 East Lincoln Highway, Exton, PA  19341",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Concept School,,(610) 399-1135,slevine@theconceptschool.org,www.theconceptschool.org,,"1120 E. Street Rd., Westtown, PA  19395",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,The Ellis School,,(412) 661-5992,devereuxc@theellisschool.org,www.theellisschool.org,,"6425 Fifth Avenue, Pittsburgh, PA  15206",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Episcopal Academy,,(484) 424-1424,tfanning@episcopalacademy.org,www.episcopalacademy.org,,"1785 Bishop White Drive, Newtown Square, PA  19073",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Glen Montessori School,,(412) 318-4885,jherrmann@glenmontessori.org,www.glenmontessori.org,,"950 Perry Highway, Pittsburgh, PA  15237",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Grayson School,,(484) 428-3241,jnance@thegraysonschool.org,www.thegraysonschool.org,,"211 Matsonford Rd., Radnor, PA  19008",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Haverford School,,(484) 417-2794,mnierenberg@haverford.org,www.haverford.org,,"450 Lancaster Avenue, Haverford, PA  19041",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Hill Top Preparatory School Inc.,,(610) 527-3230,jtremoglie@hilltopprep.org,www.hilltopprep.org,,"737 S. Ithan Avenue, Bryn Mawr, PA  19010",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Hillside School,,(610) 967-3701,dkuntzman@hillsideschool.org,www.hillsideschool.org,,"2697 Brookside Road, Macungie, PA  18062",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Janus School,,(717) 653-0025,sshaffer@thejanusschool.org,www.thejanusschool.org,,"205 Lefever Road, Mount Joy, PA  17552",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Joshua Group,,(717) 236-4464,j.politis@joshuagrouphbg.org,www.joshuagroup.org,,"1442 Market St., Harrisburg, PA  17103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Learning Lamp Inc.,,(814) 262-0732,lspangler@thelearninglamp.org,www.thelearninglamp.org,,"2025 Bedford St., Johnstown, PA  15904",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Neighborhood Academy,,(412) 365-5045,jamie.donne@theneighborhoodacademy.org,www.theneighborhoodacademy.org,,"709 North Aiken Avenue, Pittsburgh, PA  15206",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Phelps School,,(610) 644-1754,sfahey@thephelpsschool.org,www.thephelpsschool.org,,"583 Sugartown Road, Malvern, PA  19355",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Samuel School,,(717) 557-1119,rpeck@samuelschool.com,www.samuelschool.com,,"510 Joyce Road, Camp Hill, PA  17011",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The School in Rose Valley,,(610) 566-1088,nava@theschoolinrosevalley.org,www.theschoolinrosevalley.org,,"20 School Lane, Rose Valley, PA  19063",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,The Shipley School,,(610) 525-4300,pdaly@shipleyschool.org,www.shipleyschool.org,,"814 Yarrow Street, Bryn Mawr, PA  19010",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Swain School Inc.,,(610) 332-5291,bzaiser@mamail.net,www.moravianacademy.org,,"1100 S. 24th Street, Allentown, PA  18103",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,The Vista School,,(717) 583-5102,communications@vistaautismservices.org,www.thevistaschool.org,,"1021 Springboard Drive, Hershey, PA  17033",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Tom Johnson Boys Academy d/b/a Mon Valley Boys Academy,,(412) 599-1458,sheila.rawlings@mytjba.org,mytjba.org,,"653 S. Agnes Lane, West Mifflin, PA  15122",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Trinity Lutheran Church & School,,(570) 724-7723,bkohler@trinitylutheranwellsboro.org,www.trinitylutheranwellsboro.org,,"53 West Avenue, Wellsboro, PA  16901",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,United Disabilities Services,,(717) 715-8770,elizabethb@udservices.org,www.udservices.org/school,,"2270 Erin Court, Lancaster, PA  17601",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,United Way of Lackawanna and Wayne Counties,,(570) 343-1267,abassani@uwlc.net,www.uwlc.net,,"615 Jefferson Avenue, Scranton, PA  18510",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Upland Country Day School,,(610) 444-8114,eswarter@uplandcds.org,www.uplandcds.org,,"420 West Street Road, Kennett Square, PA  19348",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Valley School of Ligonier,,(724) 238-5028,development@valleyschoolofligonier.org,www.valleyschoolofligonier.org,,"P.O. Box 616, Ligonier, PA  15658",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Villa Joseph Marie High School,,(215) 357-8810,lharkrader@vjmhs.org,www.vjmhs.org,,"1180 Holland Road, Holland, PA  18966",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Villa Maria Academy (Malvern),,(610) 644-2551,mlamb@vmahs.org,www.vmahs.org,,"370 Central Avenue, Malvern, PA  19355",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Villa Maria Academy Lower School,,(610) 644-4864,pscanlon@villamaria.org,www.villamaria.org,,"280 IHM Drive, Malvern, PA  19355",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Villa Maria Cathedral Preparatory Catholic School System,,(814) 453-7737,joanne.rogers@cathedralprep.com,www.cathedralprep.com,,"250 West 10th Street, Erie, PA  16501",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Waldorf School of Pittsburgh,,(412) 441-5792,dtaylor@waldorfpittsburgh.org,www.waldorfpittsburgh.org,,"201 S. Winebiddle Street, Pittsburgh, PA  15224",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Washington County Community Foundation,,(724) 222-6330,scholar@wccf.net,www.wccf.net,,"1253 Route 519, P.O. Box 308, Eighty Four, PA  15330",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Water Street Ministries,,(717) 358-2084,mwilcox@wsm.org,www.wsm.org,,"P.O. Box 7267, Lancaster, PA  17604",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Watson Institute,,(412) 749-2885,karam@thewatsoninstitute.org,www.thewatsoninstitute.org,,"301 Camp Meeting Road, Sewickley, PA  15143",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,West Chester Friends School,,(610) 696-2615,smccardell@wcfriends.org,www.wcfriends.org,,"415 N. High Street, West Chester, PA  19380",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Western Pennsylvania Montessori School,,(412) 487-2700,director@wpms.edu,www.wpms.edu,,"2379 Wyland Ave., Allison Park, PA  15101",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Westtown School,,(610) 399-7922,courtnay.tyus@westtown.edu,www.westtown.edu,,"975 Westtown Road, West Chester, PA  19382",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,William Penn Charter School,,(215) 844-3460,crahill@penncharter.com,www.penncharter.com,,"3000 West School House Lane, Philadelphia, PA  19144",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Winchester Thurston School,,(412) 578-3738,gaym@winchesterthurston.org,www.winchesterthurston.org,,"555 Morewood Avenue, Pittsburgh, PA  15213",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Wyoming Seminary,,(570) 270-2143,cconnolly@wyomingseminary.org,www.wyomingseminary.org,,"201 North Sprague Avenue, Kingston, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,Yes
+PA,Wyoming Valley Children's Association,,(570) 714-1246,nzanon@wvcakids.org,www.wvcakids.org,,"1133 Wyoming Avenue, Forty Fort, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Wyoming Valley Montessori Association Inc.,,(570) 288-3708,cdecker@wvms.org,www.wvms.org,,"d/b/a Wyoming Valley Montessori School, 851 West Market Street, Kingston, PA  18704",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,Yeshiva Academy of Harrisburg Foundation,,(717) 574-9121,martinlowy@comcast.net,www.silveracademypa.org,,"d/b/a Silver Academy Foundation, 4218 Prosperous Drive, Harrisburg, PA  17112",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,York College of Pennsylvania,,(717) 815-6711,dkey1@ycds.org,www.ycds.org,,"441 Country Club Road, York, PA  17403",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+PA,YSC Academy,,(610) 722-0500,gokupniarek@strikerpartners.com,www.yscacademy.com,,"2501 Seaport Drive, Union Power Plant, River Front Suite No. 100, Chester, PA  19013",,https://dced.pa.gov/wp-content/themes/business2015/csv/eitc_so_list.csv,
+RI,Achievement for Children with Challenges Empowered by School Scholarships (ACCESS),,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,Children's Tuition Fund of Rhode Island,,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,F.A.C.E. of Rhode Island,,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,Scholarships to Economically Poor Students (STEPS),,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,Star Scholars Opportunity Program,,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,Teach Initiative,,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+RI,The Foundation for Rhode Island Day Schools,,,,,,,,https://tax.ri.gov/sites/g/files/xkgbur541/files/2025-07/Tax%20Credits%20for%20Contributions%20to%20Scholarship%20Organizations%20June%2030%20SGO%20List%20for%202025.pdf,Yes
+SC,Exceptional SC​,,,administrator@exceptionalsc.org,https://www.exceptionalsc.org/donors/scholarship-fund/,,,,https://dor.sc.gov/tax-credits/ecenc-program-credits,
+SD,South Dakota Partners in Education,,,,,,,,https://dlr.sd.gov/insurance/tax_credit_program/documents/sgo_participation_list.pdf,Yes
+VA,Anabaptist Scholarship Foundation of Virginia,,(540) 820-8633,,www.asfva.org,,"Harrisonburg, VA  22802",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Anna Julia Cooper Scholarship Foundation,,(804) 477-5163,,www.ajces.org/scholarship,,"Richmond, VA  23223",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Association of Christian Schools International (ACSI Children's Tuition Fund),,(719) 867-0247,,www.ChildrensTuitionFund.org,,"Colorado Springs, CO 80920",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Atlantic Shores Tuition Foundation,,(757) 479-9598,,www.shoreschristian.org,,"Virginia Beach, VA  23464",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Autism Envisioned Foundation,,(703) 828-5614,,www.autismenvisioned.com,,"Vienna, VA 22180",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,Boys Home of Virginia,,(540) 965-7715,,www.boyshomeofva.org,,"Covington, VA  24426",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Carlisle School,,(276) 632-7288,,www.carlisleschool.org,,"Martinsville, VA  24115",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Rise Academy,,(804) 236-4964,,https://www.riserichmond.org,,"Richmond, VA  23223",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,Diocese of Arlington Scholarship Foundation Inc.,,(703) 841-3896,,www.arlingtondiocese.org,,"Arlington, VA  22203",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Dunlap Garrick Christian Community Foundation,,(757) 333-7377,,,,"Norfolk, VA  23505",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Elijah House Academy,,(804) 755-7051,,https://elijahhouseacademy.org/,,"Richmond, VA  23225",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Fishburne-Hudgins Educational Foundation,,(540) 946-7700,,www.fishburne.org,,"Waynesboro, VA  22980",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Fork Union Military Academy Foundation,,(434) 824-4374,,https://www.forkunion.com/,,"Fork Union, VA 23055",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Foundation for Educational & Developmental Opportunity,,(276) 669-2823,,www.morrisonschool.org,,"Bristol, VA  24201",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Great Aspirations Scholarship Program (GRASP),,(804) 527-7718,,www.grasp4va.org,,"Glen Allen, VA  23060",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Hague School Foundation,,(646) 283-2521,,Thehagueschoolfoundation.org,,"Norfolk, VA",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Hargrave Foundation,,(434) 432-2583,,,,"Chatham, VA  24531",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,Imago Dei Scholarship Foundation,,(804) 716-7265,,https://www.imagodeirichmond.org/,,"Richmond, VA",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Jackson-Feild Homes,,(804) 354-6929,,www.jacksonfeild.org,,"Jarratt, VA   23867",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Liberty Christian Academy Inc.,,(434) 592-4960,,www.lcabulldogs.com,,"Lynchburg,  VA  24502",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Lunenburg-Nottoway Educational Foundation,,(434) 292-7218,,www.kenston.org,,"Blackstone, VA  23824",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,McMahon-Parater Foundation for Education,,(804) 359-5661,,www.mcmahonparater.org,,"Richmond, VA  23294",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,New Covenant Schools,,(434) 847-8313,,www.newcovenantschools.org,,"Lynchburg,  VA  24551",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,North Cross School,,(540) 989-6641,,www.northcross.org,,"Roanoke, VA  24018",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Potomac Conference Education Fund,,(540) 886-0771,,,,"Staunton, VA  24401",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,RENEWANATION,,(540) 890-8900,,www.renewanation.org,,"Roanoke, VA  24025",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Richmond Jewish Foundation,,(804) 545-8656,,www.rjfoundation.org,,"Richmond, VA  23226",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,St. Andrew's School,,(804) 648-4952,,www.st-andrews-school.org,,"Richmond, VA  23220",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Commonwealth Opportunity Scholars,,(571) 212-0058,,,,"Alexandria, VA 22315",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,The Community Foundation of Harrisonburg and Rockingham County,,(540) 432-3863,,www.tcfhr.org,,"Harrisonburg, VA 22803",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,The Community Foundation of the Rappahannock River Region,,(540) 373-9292,,www.cfrrr.org,,"Fredericksburg, VA  22404-0208",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,The Hunter School Foundation,,(804) 708-0048,,www.hunterclassicalchristian.org,,"Henrico, VA 23229",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,The Nansemond-Suffolk Academy Educational Foundation,,(757) 539-8789,,,,"Suffolk, VA  23434",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Tidewater Jewish Foundation Inc.,,(757) 965-6111,,www.JewishVA.org,,"Virginia Beach, VA  23462",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Torah Education Scholarship Foundation,,(804) 433-1512,,,,"Glen Allen, VA 23059",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,UP RVA,,(804) 390-3151,,www.uprva.com,,"Richmond, VA 23223",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,
+VA,Virginia Foundation for LD Students,,(757) 747-1674,,www.vflds.org,,"Virginia Beach, VA  23462",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes
+VA,Hampton Roads International Montessori School,,(757) 873-8950,,www.hrimontessori.org,,"Newport News, VA 23606",,https://www.doe.virginia.gov/home/showpublisheddocument/76022/639071974827670000,Yes

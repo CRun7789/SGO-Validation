@@ -56,18 +56,12 @@ import io
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from models import SGO
-
-try:
-    import pdfplumber
-except ImportError as e:
-    raise ImportError("pdfplumber is required: pip install pdfplumber") from e
+from parsers._shared import MAX_BYTES, HEADER_WORDS, is_header as _is_header
 
 try:
     from bs4 import BeautifulSoup
 except ImportError as e:
     raise ImportError("beautifulsoup4 is required: pip install beautifulsoup4") from e
-
-MAX_BYTES = 50_000_000
 
 # ── shared patterns ──────────────────────────────────────────────────────────
 
@@ -77,12 +71,6 @@ _EMAIL_RE    = re.compile(r"[\w.+\-]+@[\w\-]+\.[a-z]{2,}", re.IGNORECASE)
 _STATE_ZIP_RE = re.compile(r"([A-Z]{2})\s+(\d{5})")
 # First street-number token inside a string (2–6 digits surrounded by spaces)
 _STREET_START_RE = re.compile(r"\s+\d{2,6}\s+")
-
-HEADER_WORDS = {
-    "name", "sto", "sgo", "mailing", "phone", "website", "dates", "address",
-    "city", "state", "zip", "ceo", "contact", "email", "telephone", "certified",
-    "tax", "organizations",
-}
 
 _AL_MAX_PDF_WORKERS = 10  # concurrent PDF fetches for AL annual reports
 
@@ -266,11 +254,6 @@ def parse_html_al(html: str, state: str, url: str) -> list[SGO]:
     return results
 
 
-def _is_header(text: str) -> bool:
-    words = text.lower().split()
-    return bool(words) and words[0] in HEADER_WORDS
-
-
 def _split_name_address(text: str) -> tuple[str, str | None]:
     """Return (name, street_address) by splitting at the first street number."""
     m = _STREET_START_RE.search(text)
@@ -300,6 +283,11 @@ _AZ_WEBSITE_RE = re.compile(r"\b[\w-]+\.[a-z]{2,}\b", re.IGNORECASE)
 def parse_pdf_az(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
     if len(pdf_bytes) > MAX_BYTES:
         raise ValueError(f"PDF from {url} exceeds size limit")
+
+    try:
+        import pdfplumber
+    except ImportError as e:
+        raise ImportError("pdfplumber is required: pip install pdfplumber") from e
 
     results: list[SGO] = []
 
@@ -377,6 +365,11 @@ def parse_pdf_az(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
 def parse_pdf_ks(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
     if len(pdf_bytes) > MAX_BYTES:
         raise ValueError(f"PDF from {url} exceeds size limit")
+
+    try:
+        import pdfplumber
+    except ImportError as e:
+        raise ImportError("pdfplumber is required: pip install pdfplumber") from e
 
     results: list[SGO] = []
 
@@ -477,6 +470,11 @@ def _is_nv_org_line(line: str) -> bool:
 def parse_pdf_nv(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
     if len(pdf_bytes) > MAX_BYTES:
         raise ValueError(f"PDF from {url} exceeds size limit")
+
+    try:
+        import pdfplumber
+    except ImportError as e:
+        raise ImportError("pdfplumber is required: pip install pdfplumber") from e
 
     all_lines: list[str] = []
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
@@ -716,28 +714,41 @@ def parse_html_la(html: str, state: str, url: str) -> list[SGO]:
 # ── SC ───────────────────────────────────────────────────────────────────────
 #
 # The SC ECENC program page does not have a dedicated org list.  Exceptional SC
-# is mentioned in body prose, and its website (exceptionalsc.org) appears as an
-# <a> anchor.  We locate that anchor to get the org name and URL rather than
-# hardcoding them, so the parser will still work if the page wording changes.
+# is mentioned in body prose:
+#   "…visit ExceptionalSC.org or email Exceptional SC at
+#    Administrator@ExceptionalSC.org."
+# The website appears as an <a> anchor; the email appears as plain text.
+# Both are extracted from the page so they survive future wording changes
+# without requiring a hard-coded fallback.
 
 def parse_html_sc(html: str, state: str, url: str) -> list[SGO]:
     """
     Extract the single SGO from the SC ECENC program page (manually downloaded).
 
-    Finds the <a> anchor whose href points to exceptionalsc.org and uses its
-    link text as the org name.  Falls back to a hardcoded name if the anchor
-    is not found (e.g. the page was restructured).
+    Finds the <a> anchor whose href points to exceptionalsc.org for the name
+    and website, then scans the full page text for an email address on the
+    exceptionalsc.org domain.  Falls back to hardcoded values if either field
+    is absent (e.g. the page was restructured).
     """
     soup = BeautifulSoup(html, "html.parser")
 
+    # ── Website + name ────────────────────────────────────────────────────────
     anchor = soup.find("a", href=lambda h: h and "exceptionalsc.org" in h)
     if anchor:
         name = anchor.get_text(strip=True) or "Exceptional SC"
         website: str | None = anchor["href"]
     else:
-        # Page restructured — fall back to the known name with no website URL
         name = "Exceptional SC"
         website = None
+
+    # ── Email ─────────────────────────────────────────────────────────────────
+    # Scan all page text for an email address on the exceptionalsc.org domain.
+    email: str | None = None
+    page_text = soup.get_text(" ", strip=True)
+    for m in _EMAIL_RE.finditer(page_text):
+        if "exceptionalsc.org" in m.group().lower():
+            email = m.group()
+            break
 
     return [
         SGO(
@@ -747,7 +758,7 @@ def parse_html_sc(html: str, state: str, url: str) -> list[SGO]:
             raw_source=url,
             address=None,
             phone=None,
-            email=None,
+            email=email,
             website=website,
         )
     ]
@@ -770,11 +781,6 @@ def parse_html_sc(html: str, state: str, url: str) -> list[SGO]:
 #   - Leading \xa0 before a URL → stripped
 #   - Extra whitespace / non-breaking spaces in city/state/zip → normalized
 
-try:
-    import docx as _docx
-except ImportError as e:
-    raise ImportError("python-docx is required: pip install python-docx") from e
-
 MAX_BYTES_DOCX = 50_000_000
 
 _VA_HEADER_FIRST_WORDS = {"name", "scholarship", "organization", "approved"}
@@ -796,6 +802,11 @@ def parse_docx_va(docx_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
     if len(docx_bytes) > MAX_BYTES_DOCX:
         raise ValueError(f"docx from {url} exceeds size limit")
+
+    try:
+        import docx as _docx
+    except ImportError as e:
+        raise ImportError("python-docx is required: pip install python-docx") from e
 
     doc = _docx.Document(io.BytesIO(docx_bytes))
 

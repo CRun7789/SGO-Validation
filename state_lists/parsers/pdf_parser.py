@@ -9,11 +9,6 @@ import io
 import re
 from models import SGO
 
-try:
-    import pdfplumber
-except ImportError as e:
-    raise ImportError("pdfplumber is required: pip install pdfplumber") from e
-
 MAX_BYTES = 50_000_000  # 50 MB guard against malformed/malicious files
 
 _TABLE_HEADER_WORDS = {
@@ -37,6 +32,11 @@ def parse_pdf(pdf_bytes: bytes, state: str, url: str) -> list[SGO]:
     """
     if len(pdf_bytes) > MAX_BYTES:
         raise ValueError(f"PDF from {url} exceeds {MAX_BYTES // 1_000_000} MB size limit")
+
+    try:
+        import pdfplumber
+    except ImportError as e:
+        raise ImportError("pdfplumber is required: pip install pdfplumber") from e
 
     sgos: list[SGO] = []
 

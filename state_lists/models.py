@@ -1,3 +1,10 @@
+"""
+Data model for a Scholarship Granting Organization (SGO) record.
+
+Every parser in the state_lists pipeline produces a list of SGO instances.
+The dataclass is intentionally flat — one row per org — so it maps directly
+to a CSV row via dataclasses.asdict().
+"""
 from dataclasses import dataclass, field
 
 
@@ -11,6 +18,7 @@ class SGO:
     phone: str | None = None
     email: str | None = None
     website: str | None = None
+    known: str = ""        # "Yes" if this org is already a validated/certified SGO
 
     def __post_init__(self):
         self.name = self.name.strip()

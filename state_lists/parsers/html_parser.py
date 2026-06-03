@@ -5,6 +5,7 @@ Install: pip install beautifulsoup4
 """
 import re
 from models import SGO
+from parsers._shared import MAX_BYTES, HEADER_WORDS, is_header, col_index
 
 _HTML_COL_ALIASES: dict[str, list[str]] = {
     "name":    ["organization name", "name", "sgo name", "sto name", "organization"],
@@ -15,20 +16,10 @@ _HTML_COL_ALIASES: dict[str, list[str]] = {
     "website": ["web-site", "website", "url", "web address", "sto website"],
 }
 
-
-def _col_index(headers: list[str], aliases: list[str]) -> int | None:
-    hl = [h.strip().lower() for h in headers]
-    for alias in aliases:
-        if alias in hl:
-            return hl.index(alias)
-    return None
-
 try:
     from bs4 import BeautifulSoup
 except ImportError as e:
     raise ImportError("beautifulsoup4 is required: pip install beautifulsoup4") from e
-
-MAX_BYTES = 50_000_000
 
 
 def parse_html_table(html: str, state: str, url: str) -> list[SGO]:
@@ -47,7 +38,6 @@ def parse_html_table(html: str, state: str, url: str) -> list[SGO]:
     if not table:
         return parse_html_list(html, state, url)
 
-    HEADER_WORDS = {"name", "organization", "sgo", "scholarship", "no.", "#", "entity", "document"}
     all_rows = table.find_all("tr")
 
     # Detect header row and build column index map
@@ -58,7 +48,7 @@ def parse_html_table(html: str, state: str, url: str) -> list[SGO]:
         first_word = header_cells[0].lower().split()[0] if header_cells and header_cells[0].split() else ""
         if first_word in HEADER_WORDS:
             for field, aliases in _HTML_COL_ALIASES.items():
-                col[field] = _col_index(header_cells, aliases)
+                col[field] = col_index(header_cells, aliases)
             data_rows = all_rows[1:]
 
     def _cell(cells: list[str], field: str) -> str | None:

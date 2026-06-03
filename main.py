@@ -22,7 +22,7 @@ def main():
     print("="*60)
 
     # Download and concatenate all IRS files
-    print("\nDownloading IRS data from all regions...\n")
+    print("\nDownloading IRS data from all regions...\n   This may take a while (est. 1 min), as there are over a million rows of data.\n")
     irs_data = download_and_concatenate_irs_files()
 
     if irs_data is None:
@@ -42,7 +42,7 @@ def main():
     print(f"\tAfter IRS criteria: {len(irs_data)}")
     print(f"\nAfter all filtering: {len(irs_data)} rows")
 
-    # Apply sortingSGOs scoring logic to the already-filtered set
+    # Apply SGO scoring logic to the already-filtered set
     print("\nComputing confidence scores...")
     scorer_results = compute_sgo_scores(irs_data)
     irs_data['sgo_scorer_score'] = scorer_results['sgo_scorer_score']
@@ -171,9 +171,7 @@ def _export_excel(df, path):
     """
     from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
-    from openpyxl.worksheet.filters import FilterColumn, Filters
     from openpyxl.formatting.rule import CellIsRule
-    from openpyxl.styles import PatternFill
 
     # ── 1. Build business address ────────────────────────────────────────────
     def _address(row):
@@ -286,7 +284,7 @@ def _export_excel(df, path):
             cell.alignment = center
 
             # Width
-            dim.width = COL_WIDTHS.get(col_name, 12)
+            dim.width = COL_WIDTHS.get(col_name, 13)
 
             # Hide raw IRS columns, Region, and score sub-columns
             if col_idx <= n_raw_hidden or col_name == 'Region' or col_name in score_sub:
