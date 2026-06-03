@@ -31,7 +31,6 @@ ALL_CLASS_VALID  = {"1000", "1200", "1700", "2000", "7000"}
 # Certified SGO lists by state (from NonprofitFinder.java CERTIFIED_BY_STATE)
 # Keys are lowercase 2-letter state codes matching IRS STATE column values.
 # ---------------------------------------------------------------------------
-
 CERTIFIED_BY_STATE = {
     "al": {
         "Scholarships for Kids, Inc",

@@ -1,9 +1,21 @@
 """
-State-specific parsers for AZ, KS, NV (PDF) and FL, LA, SC (HTML).
+State-specific parsers for AL (HTML + PDF), AZ, KS, NV (PDF), FL, LA, SC
+(HTML), and VA (Word).
 
 PDF states (AZ, KS, NV) pack multiple fields into single text runs that the
 generic parser cannot split into columns.  Each uses regex to extract fields
 from the concatenated text.
+
+AL lists each SGO on the annual-public-report page as <li><a href="…pdf">Name
+</a></li>, where each PDF is that org's annual report filed with the Alabama
+DOR.  Section I of every report contains a standardised block with mailing
+address, telephone, and email.  The parser fetches all PDFs concurrently;
+digitally-filled reports yield full contact info while scanned/image-only
+reports (pdfplumber returns no text) degrade gracefully to name-only records.
+Phone numbers in digitally-filled reports are rendered with spaced digits
+inside the area-code parentheses (PDF form-field artifact) and are
+normalised to (NXX) NXX-XXXX format by stripping non-digit characters and
+re-formatting the resulting 10-digit string.
 
 FL uses a hand-saved HTML page whose orgs are not in a table or <li> list but
 in individual <p> tags, each containing an external <a> link (org name +
@@ -19,16 +31,30 @@ it in a table or dedicated element; the org name and website appear in body
 prose.  The parser locates the anchor whose href contains "exceptionalsc.org"
 and extracts the name and URL from it.
 
+VA provides a Word document with a single table (38 data rows + header):
+  Col 0  Name of Approved Scholarship Foundation
+  Col 1  Telephone
+  Col 2  Web address   (may be "N/A" or have leading non-breaking spaces)
+  Col 3  City, State, ZIP Code
+  Col 4  Effective Date  (not stored — not in the SGO schema)
+
+The address field is set to the city/state/zip cell (no street address is
+provided in the source document).
+
 Fields extracted by state:
+  AL — name, address, phone, email    (no EIN, no website; contact info from
+                                       individual annual-report PDFs)
   AZ — name, address, phone, website  (no EIN, no email)
   FL — name, address, phone, email, website
   KS — name, address, phone, email    (no EIN, no website)
   LA — name, website                  (no EIN, address, phone, or email)
   NV — name, address, phone, email    (no EIN; website unreliable — omitted)
   SC — name, website                  (no EIN, address, phone, or email)
+  VA — name, address, phone, website  (no EIN, no email)
 """
 import io
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from models import SGO
 
 try:
@@ -57,6 +83,187 @@ HEADER_WORDS = {
     "city", "state", "zip", "ceo", "contact", "email", "telephone", "certified",
     "tax", "organizations",
 }
+
+_AL_MAX_PDF_WORKERS = 10  # concurrent PDF fetches for AL annual reports
+
+
+def _parse_al_section_i(pdf_bytes: bytes) -> tuple[str | None, str | None, str | None]:
+    """
+    Extract (address, phone, email) from Section I of an AL SGO annual report.
+
+    Alabama DOR uses a standardised one-page form.  Digitally-filled PDFs have
+    an embedded text layer that pdfplumber can read directly; scanned/paper
+    submissions have no text layer and return empty strings.  In both cases we
+    only inspect page 1 (Section I is always on the first page).
+
+    Phone normalisation: digitally-filled forms render each digit of the area
+    code with a trailing space (e.g. "( 2 0 5 ) 2067804").  We strip all
+    non-digit characters and reformat the 10-digit result as (NXX) NXX-XXXX.
+    Already-formatted strings (e.g. "(205) 445-2908") survive the same path
+    correctly since their digit sequence is also 10 digits.
+
+    Returns (None, None, None) when no text is extractable (scanned PDF).
+    """
+    try:
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            if not pdf.pages:
+                return None, None, None
+            text = pdf.pages[0].extract_text() or ""
+    except Exception:
+        return None, None, None
+
+    if not text.strip():
+        return None, None, None  # scanned image PDF — graceful degradation
+
+    address: str | None = None
+    phone:   str | None = None
+    email:   str | None = None
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+
+        # ── Email + Phone ────────────────────────────────────────────────────
+        # Section I prints both on the same line: "<phone digits>  <email>"
+        # Skip the column-header row ("TELEPHONE NUMBER   EMAIL ADDRESS").
+        if "@" in line and email is None and "EMAIL" not in line.upper()[:20]:
+            email_m = _EMAIL_RE.search(line)
+            if email_m:
+                email = email_m.group()
+                # Everything before the email match is the phone field.
+                digits = re.sub(r"\D", "", line[:email_m.start()])
+                if len(digits) >= 10:
+                    d = digits[-10:]  # last 10 in case of stray leading digits
+                    phone = f"({d[0:3]}) {d[3:6]}-{d[6:10]}"
+
+        # ── Mailing Address ───────────────────────────────────────────────────
+        # The data row contains a 5-digit ZIP code; the label row does not.
+        # We also require at least one lowercase letter so we don't accidentally
+        # match all-caps header rows that happen to contain a state abbreviation.
+        if address is None and re.search(r"\d{5}", line) and re.search(r"[a-z]", line):
+            zip_m = re.search(r"\b\d{5}\b", line)
+            if zip_m:
+                # Keep only the text up through the ZIP code (ignore anything
+                # after, such as continuation of a PDF column layout).
+                candidate = " ".join(line[:zip_m.end()].split())
+                # Require at least one non-digit character before the ZIP so
+                # we don't capture stray numeric lines.
+                if re.search(r"[A-Za-z]", candidate):
+                    address = candidate
+
+    return address, phone, email
+
+
+_AL_YEAR_RE = re.compile(r"/(\d{4})/")  # matches the year folder in AL DOR upload URLs
+
+
+def parse_html_al(html: str, state: str, url: str) -> list[SGO]:
+    """
+    Extract SGOs from the Alabama DOR annual-public-report page.
+
+    Strategy:
+      1. Parse the HTML for every <a href="…pdf"> anchor whose href points to
+         an AL DOR annual SGO report.  Extract the report year from the URL's
+         upload-folder path segment (e.g. /uploads/2025/10/…).
+      2. Determine the most recent year present across all collected links and
+         keep only those links.  This excludes orgs that filed in prior years
+         but have not yet filed for the current year.
+      3. Fetch all current-year report PDFs concurrently (up to
+         _AL_MAX_PDF_WORKERS threads).
+      4. Parse Section I of each PDF for mailing address, phone, and email.
+         Scanned / image-only PDFs return (None, None, None) and are stored
+         as name-only records without raising an error.
+
+    The `fetch_bytes` function is imported lazily from `fetcher` to avoid a
+    circular import at module load time (state_parsers ← fetcher ← sources).
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Remove nav chrome so we only see content anchors
+    for tag in soup.find_all(["nav", "header", "footer"]):
+        tag.decompose()
+
+    # Collect (name, pdf_url, year) for every AL DOR annual SGO report link
+    candidates: list[tuple[str, str, int]] = []
+
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if not href.lower().endswith(".pdf"):
+            continue
+        if "revenue.alabama.gov" not in href and not href.startswith("/"):
+            continue
+        name = a.get_text(strip=True)
+        if not name or len(name) < 3:
+            continue
+        year_m = _AL_YEAR_RE.search(href)
+        year = int(year_m.group(1)) if year_m else 0
+        candidates.append((name, href, year))
+
+    if not candidates:
+        raise ValueError(f"No SGO PDF links found on AL page: {url}")
+
+    # Keep only links from the most recent year
+    most_recent_year = max(year for _, _, year in candidates)
+    print(f"  [AL] Most recent report year: {most_recent_year} "
+          f"({sum(1 for _, _, y in candidates if y == most_recent_year)} orgs)")
+
+    # Deduplicate by normalised name within the most-recent-year set
+    # (guard against duplicate anchors for the same org on the same page)
+    seen_names: set[str] = set()
+    org_links: list[tuple[str, str]] = []
+    for name, href, year in candidates:
+        if year != most_recent_year:
+            continue
+        key = re.sub(r"\W+", "", name).lower()
+        if key in seen_names:
+            continue
+        seen_names.add(key)
+        org_links.append((name, href))
+
+    if not org_links:
+        raise ValueError(f"No SGO PDF links found on AL page: {url}")
+
+    # Lazy import to avoid circular dependency at module load time
+    try:
+        from fetcher import fetch_bytes as _fetch_bytes
+    except ImportError:
+        _fetch_bytes = None  # type: ignore[assignment]
+
+    def _fetch_and_parse(item: tuple[str, str]) -> SGO:
+        org_name, pdf_url = item
+        addr = ph = em = None
+        if _fetch_bytes is not None:
+            try:
+                pdf_bytes = _fetch_bytes(pdf_url)
+                addr, ph, em = _parse_al_section_i(pdf_bytes)
+            except Exception:
+                pass  # network error or corrupt PDF — return name-only record
+        return SGO(
+            state=state,
+            name=org_name,
+            ein=None,
+            raw_source=url,
+            address=addr,
+            phone=ph,
+            email=em,
+            website=None,
+        )
+
+    results: list[SGO] = []
+    with ThreadPoolExecutor(max_workers=_AL_MAX_PDF_WORKERS) as pool:
+        futures = {pool.submit(_fetch_and_parse, item): item for item in org_links}
+        for future in as_completed(futures):
+            try:
+                results.append(future.result())
+            except Exception:
+                org_name, pdf_url = futures[future]
+                results.append(SGO(state=state, name=org_name, ein=None, raw_source=url))
+
+    if not results:
+        raise ValueError(f"No SGO names extracted from AL page: {url}")
+
+    return results
 
 
 def _is_header(text: str) -> bool:
@@ -544,3 +751,99 @@ def parse_html_sc(html: str, state: str, url: str) -> list[SGO]:
             website=website,
         )
     ]
+
+
+# ── VA ───────────────────────────────────────────────────────────────────────
+#
+# The VA VDOE Word document contains a single table with 5 columns:
+#   0  Name of Approved Scholarship Foundation
+#   1  Telephone
+#   2  Web address      (may be "N/A" or have leading \xa0 non-breaking spaces)
+#   3  City, State, ZIP Code
+#   4  Effective Date   (informational only — not stored in the SGO schema)
+#
+# There is no street address in the source document; the address field is
+# populated from the City/State/ZIP cell.
+#
+# Edge cases handled:
+#   - "N/A" website → None
+#   - Leading \xa0 before a URL → stripped
+#   - Extra whitespace / non-breaking spaces in city/state/zip → normalized
+
+try:
+    import docx as _docx
+except ImportError as e:
+    raise ImportError("python-docx is required: pip install python-docx") from e
+
+MAX_BYTES_DOCX = 50_000_000
+
+_VA_HEADER_FIRST_WORDS = {"name", "scholarship", "organization", "approved"}
+
+
+def _va_cell(row, col_idx: int) -> str:
+    """Return stripped, \xa0-cleaned text from a table cell."""
+    if col_idx >= len(row.cells):
+        return ""
+    return row.cells[col_idx].text.replace("\xa0", " ").strip()
+
+
+def parse_docx_va(docx_bytes: bytes, state: str, url: str) -> list[SGO]:
+    """
+    Extract SGOs from the VA VDOE Word document.
+
+    Reads the first table in the document; each data row provides name,
+    phone, website, and city/state/zip address.
+    """
+    if len(docx_bytes) > MAX_BYTES_DOCX:
+        raise ValueError(f"docx from {url} exceeds size limit")
+
+    doc = _docx.Document(io.BytesIO(docx_bytes))
+
+    # Find the first table (there is only one)
+    if not doc.tables:
+        raise ValueError(f"No tables found in VA docx: {url}")
+
+    table = doc.tables[0]
+    results: list[SGO] = []
+
+    for row in table.rows:
+        name = _va_cell(row, 0)
+        if not name:
+            continue
+        # Skip the header row (first word is a known header term)
+        first_word = name.split()[0].lower().rstrip(":")
+        if first_word in _VA_HEADER_FIRST_WORDS:
+            continue
+
+        phone_raw = _va_cell(row, 1)
+        phone: str | None = phone_raw if phone_raw else None
+
+        website_raw = _va_cell(row, 2)
+        # Treat "N/A", blank, or whitespace-only as absent
+        if website_raw and website_raw.upper() != "N/A":
+            # Ensure a usable URL scheme
+            website: str | None = website_raw if "." in website_raw else None
+        else:
+            website = None
+
+        city_state_zip = _va_cell(row, 3)
+        address: str | None = city_state_zip if city_state_zip else None
+
+        try:
+            results.append(SGO(
+                state=state,
+                name=name,
+                ein=None,
+                raw_source=url,
+                address=address,
+                phone=phone,
+                email=None,
+                website=website,
+            ))
+        except ValueError:
+            pass
+
+    if not results:
+        raise ValueError(f"No SGO names extracted from VA docx: {url}")
+
+    return results

@@ -12,11 +12,28 @@ from models import SGO
 from sources import urls, blocked_urls, manual_sources
 
 _HERE = Path(__file__).parent  # state_lists/ — used to resolve manual file paths
+_ROOT = _HERE.parent           # repo root — needed to import from src/
+
+# ── certified-SGO lookup (from the hand-maintained list in sgo_scorer.py) ────
+# Insert repo root so "src.processing.sgo_scorer" is importable regardless of
+# where the script is launched from.
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+from src.processing.sgo_scorer import CERTIFIED_BY_STATE
+from utils import normalize_name
+
+# Pre-normalize every certified name once at startup:
+#   { "al": {"scholarships for kids", "alabama opportunity scholarship fund", …}, … }
+_CERTIFIED_NORMALIZED: dict[str, set[str]] = {
+    state: {normalize_name(n) for n in names}
+    for state, names in CERTIFIED_BY_STATE.items()
+}
+
 from fetcher import fetch_bytes, check_site, session
 from parsers.html_parser import parse_html_table, parse_html_list
 from parsers.pdf_parser import parse_pdf
 from parsers.file_parser import parse_xlsx, parse_csv, parse_docx
-from parsers.state_parsers import parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl, parse_html_la, parse_html_sc
+from parsers.state_parsers import parse_html_al, parse_pdf_az, parse_pdf_ks, parse_pdf_nv, parse_html_fl, parse_html_la, parse_html_sc, parse_docx_va
 
 _STATE_PDF_PARSERS = {
     "az": parse_pdf_az,
@@ -26,9 +43,15 @@ _STATE_PDF_PARSERS = {
 
 # State-specific parsers for HTML page-list sources (keyed by 2-letter state code).
 _STATE_HTML_PARSERS = {
+    "al": parse_html_al,
     "fl": parse_html_fl,
     "la": parse_html_la,
     "sc": parse_html_sc,
+}
+
+# State-specific parsers for Word (.docx) sources (keyed by 2-letter state code).
+_STATE_DOCX_PARSERS = {
+    "va": parse_docx_va,
 }
 
 
@@ -50,6 +73,9 @@ def get_parser(name: str):
     if "csv" in n or "excel" in n:
         return lambda content, state, url: parse_csv(content, state, url)
     if "word" in n:
+        state_parser = _STATE_DOCX_PARSERS.get(state_code)
+        if state_parser:
+            return lambda content, state, url: state_parser(content, state, url)
         return lambda content, state, url: parse_docx(content, state, url)
     # HTML sources — check for state-specific parser first
     html_parser = _STATE_HTML_PARSERS.get(state_code)
@@ -177,11 +203,18 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
             removed += 1
             continue
         if name.isupper() and " " in name:
-            # str.title() capitalises after apostrophes ("Children'S") — use re instead.
-            # Exclude straight apostrophe (U+0027) and curly right-quote (U+2019) from the
-            # lookbehind so "children's" and "children’s" both stay lowercase after the quote.
-            name = re.sub(r"(?<![\w'’])(\w)", lambda m: m.group().upper(),
-                          name.lower())
+            # Skip title-casing if any word is ≤3 characters — those are likely
+            # intentional abbreviations or acronyms (e.g. "BBH", "SGO", "1") whose
+            # original capitalisation should be preserved.
+            words = name.split()
+            if any(len(w) <= 3 for w in words):
+                pass  # leave casing as-is
+            else:
+                # str.title() capitalises after apostrophes ("Children’S") — use re instead.
+                # Exclude straight apostrophe (U+0027) and curly right-quote (U+2019) from the
+                # lookbehind so "children’s" and "children’s" both stay lowercase after the quote.
+                name = re.sub(r"(?<![\w’’])(\w)", lambda m: m.group().upper(),
+                              name.lower())
         name = _TRAILING_BRACKET_RE.sub("", name).strip()
         name = _TRAILING_SO_RE.sub("", name).strip()
         name = _TRAILING_PHONE_RE.sub("", name).strip()
@@ -208,6 +241,30 @@ def postprocess(sgos: list[SGO]) -> list[SGO]:
     return cleaned
 
 
+def filter_certified(sgos: list[SGO]) -> list[SGO]:
+    """
+    Remove orgs already present in CERTIFIED_BY_STATE.
+
+    These are covered by the hand-maintained certified list in sgo_scorer.py
+    and will be handled by the IRS scoring pipeline in the combination step.
+    Dropping them here avoids duplication in the final combined output.
+
+    Matching uses normalize_name() so differences in articles, corporate
+    suffixes, punctuation, and capitalisation are ignored.
+    """
+    kept: list[SGO] = []
+    removed = 0
+    for sgo in sgos:
+        certified = _CERTIFIED_NORMALIZED.get(sgo.state.lower(), set())
+        if normalize_name(sgo.name) in certified:
+            removed += 1
+        else:
+            kept.append(sgo)
+    print(f"Certified filter: removed {removed} already-certified orgs "
+          f"→ {len(kept)} novel records remain")
+    return kept
+
+
 # ── output ───────────────────────────────────────────────────────────────────
 
 _FIELDNAMES = ["state", "name", "ein", "address", "phone", "email", "website", "raw_source"]
@@ -221,7 +278,8 @@ def write_results(sgos: list[SGO], path: str) -> None:
         writer.writerows(asdict(s) for s in sgos)
     print(f"Wrote {len(sgos)} SGO records to {path}")
 
-    xlsx_path = path.replace(".csv", ".xlsx")
+    xlsx_path = str(_XLSX_DIR / Path(path).with_suffix(".xlsx").name)
+    _XLSX_DIR.mkdir(parents=True, exist_ok=True)
     _export_xlsx(sgos, xlsx_path)
 
 
@@ -235,14 +293,31 @@ def _export_xlsx(sgos: list[SGO], path: str) -> None:
     for sgo in sgos:
         ws.append([getattr(sgo, f) or "" for f in _FIELDNAMES])
 
+    # Remove any trailing empty rows (openpyxl can leave one after the last append)
+    while ws.max_row > 1:
+        if all(cell.value in (None, "") for cell in ws[ws.max_row]):
+            ws.delete_rows(ws.max_row)
+        else:
+            break
+
     # Column widths in character units, matching _FIELDNAMES order:
     # state, name, ein, address, phone, email, website, raw_source
     _COL_WIDTHS = [6, 51, 10, 53, 13, 38, 33, 71]
     for i, width in enumerate(_COL_WIDTHS, start=1):
         ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
 
-    wb.save(path)
-    print(f"Wrote {len(sgos)} SGO records to {path}")
+    while True:
+        try:
+            wb.save(path)
+            print(f"Wrote {len(sgos)} SGO records to {path}")
+            break
+        except PermissionError:
+            print(f"\n[ERROR] Cannot write {Path(path).name} — the file is open in another program.")
+            try:
+                input("Close the file in Excel, then press Enter to retry... ")
+            except EOFError:
+                print("Skipping xlsx export (non-interactive mode).")
+                break
 
 
 # ── pipeline entry points ────────────────────────────────────────────────────
@@ -321,7 +396,12 @@ def check_urls() -> None:
 _MAX_FETCH_WORKERS = 8  # concurrent HTTP threads; all sources are different domains
 
 
-def run(output_path: str = "sgo_lists.csv") -> None:
+_OUTPUT_DIR = _ROOT / "data" / "processed"
+_CSV_DIR    = _OUTPUT_DIR / "csv"
+_XLSX_DIR   = _OUTPUT_DIR / "xlsx"
+
+def run(output_path: str = str(_CSV_DIR / "state_sgo_lists.csv"),
+        full_pipeline: bool = False) -> None:
     """
     Fetch and parse every accessible data source; write results to output_path.
 
@@ -402,23 +482,167 @@ def run(output_path: str = "sgo_lists.csv") -> None:
             print(f"  FAILED: {e}")
 
     all_sgos = postprocess(all_sgos)
+    all_sgos = filter_certified(all_sgos)
+    _CSV_DIR.mkdir(parents=True, exist_ok=True)
     write_results(all_sgos, output_path)
 
-    xlsx_path = (_HERE / Path(output_path).name).with_suffix(".xlsx")
-    try:
-        answer = input("\nOpen sgo_lists.xlsx in Excel? [y/N]: ").strip().lower()
-    except EOFError:
-        answer = ""
-    if answer == "y":
-        import subprocess
-        subprocess.Popen(
-            ["explorer.exe", str(xlsx_path)],
-            creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
-        )
-        print("   Starting up Excel... This may take a moment.")
-        time.sleep(4)
+    print("\nState lists pipeline complete.")
 
-    print("\nPipeline complete!")
+    if not full_pipeline:
+        import subprocess
+        xlsx_path = _XLSX_DIR / Path(output_path).with_suffix(".xlsx").name
+        try:
+            answer = input("\nOpen state_sgo_lists.xlsx in Excel? [y/N]: ").strip().lower()
+        except EOFError:
+            answer = ""
+        if answer == "y":
+            subprocess.Popen(
+                ["explorer.exe", str(xlsx_path)],
+                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+            )
+            time.sleep(2)
+        return
+
+    # ── Combination pipeline ──────────────────────────────────────────────────
+    import subprocess
+    print("\n" + "=" * 60)
+    print("Starting combination pipeline (IRS EO BMF)...")
+    print("=" * 60)
+    result = subprocess.run(
+        [sys.executable, str(_ROOT / "main.py")],
+        cwd=str(_ROOT),
+    )
+    if result.returncode != 0:
+        print(f"\nCombination pipeline exited with code {result.returncode}.")
+
+    # ── Enrich state_sgo_lists with IRS data ──────────────────────────────────
+    _ENRICHED_FIELDNAMES = [
+        "state", "name", "ein", "phone", "email", "website",
+        "Contact Name", "address", "Ruling Date", "raw_source",
+    ]
+    state_sgo_path = _CSV_DIR  / "state_sgo_lists.csv"
+    combined_path  = _CSV_DIR  / "combined_irs_data.csv"
+    enriched_path  = _CSV_DIR  / "enriched_data.csv"
+
+    if not combined_path.exists():
+        print(f"\n[WARN] {combined_path.name} not found — skipping enrichment.")
+    else:
+        # Build index: (STATE_upper, normalized_name) → best IRS row
+        # When duplicates exist, keep the row with the highest combined_score.
+        irs_index: dict[tuple[str, str], dict] = {}
+        with open(combined_path, encoding="utf-8") as f:
+            for irs_row in csv.DictReader(f):
+                state = irs_row.get("STATE", "").strip().upper()
+                key   = (state, normalize_name(irs_row.get("NAME", "")))
+                if key not in irs_index:
+                    irs_index[key] = irs_row
+                else:
+                    try:
+                        if (float(irs_row.get("combined_score") or 0)
+                                > float(irs_index[key].get("combined_score") or 0)):
+                            irs_index[key] = irs_row
+                    except (ValueError, TypeError):
+                        pass
+
+        def _irs_address(irs_row: dict) -> str:
+            parts = [irs_row.get(c, "").strip()
+                     for c in ("STREET", "CITY", "STATE", "ZIP")]
+            return ", ".join(p for p in parts if p)
+
+        total = matched = 0
+        with open(state_sgo_path, encoding="utf-8") as fin, \
+             open(enriched_path, "w", newline="", encoding="utf-8") as fout:
+            reader = csv.DictReader(fin)
+            writer = csv.DictWriter(fout, fieldnames=_ENRICHED_FIELDNAMES)
+            writer.writeheader()
+            for row in reader:
+                total += 1
+                enriched = {**row, "Contact Name": "", "Ruling Date": ""}
+                key = (row.get("state", "").strip().upper(),
+                       normalize_name(row.get("name", "")))
+                irs = irs_index.get(key)
+                if irs:
+                    matched += 1
+                    if not enriched.get("ein"):
+                        enriched["ein"]     = irs.get("EIN", "").strip()
+                    if not enriched.get("address"):
+                        enriched["address"] = _irs_address(irs)
+                    enriched["Contact Name"] = irs.get("ICO", "").strip()
+                    enriched["Ruling Date"]  = irs.get("RULING", "").strip()
+                writer.writerow(enriched)
+
+        print(f"\nEnrichment: matched {matched}/{total} rows from IRS data "
+              f"→ {enriched_path.name}")
+
+        # ── Export enriched_data.xlsx ─────────────────────────────────────────
+        import openpyxl
+        enriched_xlsx = _XLSX_DIR / "enriched_data.xlsx"
+        _XLSX_DIR.mkdir(parents=True, exist_ok=True)
+        _ENRICHED_COL_HEADERS = {
+            "state":        "State",
+            "name":         "Name",
+            "ein":          "EIN",
+            "phone":        "Phone",
+            "email":        "Email",
+            "website":      "Website",
+            "Contact Name": "Contact Name",
+            "address":      "Address",
+            "Ruling Date":  "Ruling Date",
+            "raw_source":   "Raw Source",
+        }
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.append([_ENRICHED_COL_HEADERS.get(f, f) for f in _ENRICHED_FIELDNAMES])
+        with open(enriched_path, encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                ws.append([row.get(col, "") or "" for col in _ENRICHED_FIELDNAMES])
+        # Remove any trailing empty rows
+        while ws.max_row > 1:
+            if all(cell.value in (None, "") for cell in ws[ws.max_row]):
+                ws.delete_rows(ws.max_row)
+            else:
+                break
+        # Column widths matching _ENRICHED_FIELDNAMES order:
+        # State, Name, EIN, Phone, Email, Website, Contact Name, Address, Ruling Date, Raw Source
+        _ENRICHED_COL_WIDTHS = [5, 42, 11, 13, 30, 30, 18, 52, 10, 65]
+        for i, width in enumerate(_ENRICHED_COL_WIDTHS, start=1):
+            ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
+        while True:
+            try:
+                wb.save(enriched_xlsx)
+                print(f"Wrote enriched_data.xlsx to {enriched_xlsx}")
+                break
+            except PermissionError:
+                print(f"\n[ERROR] Cannot write enriched_data.xlsx — the file is open in another program.")
+                try:
+                    input("Close the file in Excel, then press Enter to retry... ")
+                except EOFError:
+                    print("Skipping xlsx export (non-interactive mode).")
+                    break
+
+        # ── Offer to open in Excel ────────────────────────────────────────────
+        try:
+            answer = input("\nOpen enriched_data.xlsx in Excel? [y/N]: ").strip().lower()
+        except EOFError:
+            answer = ""
+        if answer == "y":
+            subprocess.Popen(
+                ["explorer.exe", str(enriched_xlsx)],
+                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+            )
+            time.sleep(2)
 
 if __name__ == "__main__":
-    run()
+    print("Which pipeline do you want to run?")
+    print("  1  State lists only  (fetch, parse, deduplicate, write state_sgo_lists)")
+    print("  2  Full combination  (state lists + IRS EO BMF enrichment)")
+    try:
+        choice = input("Enter 1 or 2: ").strip()
+    except EOFError:
+        choice = "1"
+
+    if choice not in ("1", "2"):
+        print(f"Invalid choice {choice!r} — defaulting to state lists only.")
+        choice = "1"
+
+    run(full_pipeline=choice == "2")

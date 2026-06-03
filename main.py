@@ -93,7 +93,7 @@ def main():
 
 
     # Add contact info / website lookup (prefer EIN, fallback to NAME)
-    print("\n\nFinding contact info...")
+    print("\n\nFinding contact info through 990N form...")
     def _lookup_website(row):
         ein = row['EIN'] if pd.notna(row.get('EIN')) else None
         name = row['NAME'] if pd.notna(row.get('NAME')) else None
@@ -106,15 +106,18 @@ def main():
     # TODO: Add additional contact info retrieval here before exporting
 
     # Save outputs
-    processed_dir = os.path.join("data", "processed")
+    csv_dir  = os.path.join("data", "processed", "csv")
+    xlsx_dir = os.path.join("data", "processed", "xlsx")
+    os.makedirs(csv_dir,  exist_ok=True)
+    os.makedirs(xlsx_dir, exist_ok=True)
 
-    # Plain CSV (backwards-compatible)
-    csv_file = os.path.join(processed_dir, "combined_irs_data.csv")
+    # Plain CSV
+    csv_file = os.path.join(csv_dir, "combined_irs_data.csv")
     irs_data.to_csv(csv_file, index=False)
     print(f"\nCSV saved to {csv_file}")
 
     # Excel with score columns highlighted
-    xlsx_file = os.path.join(processed_dir, "combined_irs_data_scored.xlsx")
+    xlsx_file = os.path.join(xlsx_dir, "combined_irs_data_scored.xlsx")
     excel_df = _remove_certified_rows(irs_data)
     _export_excel(excel_df, xlsx_file)
     print(f"Excel saved to {xlsx_file}")
